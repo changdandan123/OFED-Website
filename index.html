@@ -483,232 +483,251 @@
     </footer>
 
     <script>
-        // ==================== 全局变量区域 ====================
-        let inventoryData = [];
-        let inversionData = [];
-        let comparisonData = [];
-        let currentInvChartType = 'line';
-        const myExtendedColors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#2f4554', '#61a0a8', '#d48265'];
-        const currentYear = new Date().getFullYear();
-        const yearsRange = Array.from({length: currentYear - 1980 + 2}, (_, i) => 1980 + i);
+        html
+<script>
+// ==================== 全局变量区域 ====================
+let inventoryData = [];
+let inversionData = [];
+let comparisonData = [];
+let currentInvChartType = 'line';
+const myExtendedColors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#2f4554', '#61a0a8', '#d48265'];
+const currentYear = new Date().getFullYear();
+const yearsRange = Array.from({length: currentYear - 1980 + 2}, (_, i) => 1980 + i);
 
-        // 网格地图相关变量
-        let gridWorkbook = null;
-        let gridSheetNames = [];
-        let gridYearsCache = {};
-        let gridDataCache = {};
-        let chinaBorderLines = null;
-        const GRID_XLSX_FILE = '网格化清单.xlsx';
+// 网格地图相关变量
+let gridWorkbook = null;
+let gridSheetNames = [];
+let gridYearsCache = {};
+let gridDataCache = {};
+let chinaBorderLines = null;
+const GRID_XLSX_FILE = '网格化清单.xlsx';
 
-        // ==================== 云开发登录逻辑 ====================
-        // 1. 初始化云开发 (请替换website-8gi0oq10bc63b733)
+// ==================== 云开发登录逻辑（重构版）====================
+// 使用对象封装，避免变量提升问题
+const cloudAuth = {
+    app: null,
+    auth: null,
+    currentVerificationInfo: null,
+    
+    // 初始化方法
+    init: function() {
         console.log('开始初始化云开发...');
-        const app = cloudbase.init({
-            env: "website-8gi0oq10bc63b733" // ⚠️ 请替换成你的真实环境ID！
-        });
-
-        // 2. 定义 auth 变量
-        let auth = null;
-        let currentVerificationInfo = null;
-
-        // 3. 立即初始化 auth
         try {
-            auth = app.auth({ persistence: 'local' });
+            this.app = cloudbase.init({
+                env: "YOUR_ENV_ID" // ⚠️ 请替换成你的真实环境ID！
+            });
+            console.log('✅ app初始化成功');
+            
+            this.auth = this.app.auth({ persistence: 'local' });
             console.log('✅ auth初始化成功');
+            
+            // 设置登录状态监听
+            this.setupAuthListener();
+            
+            return true;
         } catch (error) {
-            console.error('❌ auth初始化失败:', error);
+            console.error('❌ 云开发初始化失败:', error);
+            return false;
         }
-
-        // 4. 监听登录状态变化
-        if (auth) {
-            auth.onAuthStateChanged(function(user) {
+    },
+    
+    // 设置登录状态监听
+    setupAuthListener: function() {
+        if (this.auth) {
+            this.auth.onAuthStateChanged((user) => {
                 console.log('登录状态变化，当前用户:', user ? user.email : '未登录');
-                updateUserStatus(user);
+                this.updateUserStatus(user);
             });
         }
+    },
+    
+    // 更新用户界面状态
+    updateUserStatus: function(user) {
+        const statusDiv = document.getElementById('user-status');
+        if (!statusDiv) return;
+        
+        if (user) {
+            statusDiv.innerHTML = `
+                <span class="text-sm font-semibold text-white">${user.email || '已登录'}</span>
+                <button onclick="cloudAuth.logout()" class="ml-2 text-sm bg-red-600 px-3 py-1 rounded hover:bg-red-700 transition">退出</button>
+            `;
+        } else {
+            statusDiv.innerHTML = `
+                <button onclick="cloudAuth.openAuthModal()" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded shadow text-sm font-semibold transition">
+                    Login / Register
+                </button>
+            `;
+        }
+    },
+    
+    // 退出登录
+    logout: function() {
+        if (!this.auth) {
+            alert('认证服务未就绪，请刷新页面');
+            return;
+        }
+        this.auth.signOut().then(() => {
+            console.log('退出成功');
+            alert('您已退出登录');
+        }).catch(error => {
+            console.error('退出失败:', error);
+        });
+    },
+    
+    // 打开登录模态框
+    openAuthModal: function() {
+        document.getElementById('auth-modal').classList.remove('hidden');
+        this.currentVerificationInfo = null;
+        document.getElementById('auth-email').value = '';
+    },
+    
+    // 关闭登录模态框
+    closeAuthModal: function() {
+        document.getElementById('auth-modal').classList.add('hidden');
+    },
+    
+    // 发送验证码
+    sendVerificationCode: async function() {
+        console.log('发送验证码被调用');
+        
+        // 检查auth是否初始化
+        if (!this.auth) {
+            console.error('auth未初始化');
+            alert('认证服务未初始化，请刷新页面重试');
+            return;
+        }
 
-        // 5. 更新用户界面状态
-        function updateUserStatus(user) {
-            const statusDiv = document.getElementById('user-status');
-            if (!statusDiv) return;
+        const emailInput = document.getElementById('auth-email');
+        if (!emailInput) {
+            console.error('找不到邮箱输入框');
+            return;
+        }
+        
+        const email = emailInput.value.trim();
+        if (!email) {
+            alert('请输入邮箱');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('请输入正确的邮箱格式');
+            return;
+        }
+
+        const sendBtn = document.querySelector('#auth-modal button:nth-child(1)');
+        const originalText = sendBtn ? sendBtn.innerText : '发送验证码';
+        if (sendBtn) {
+            sendBtn.disabled = true;
+            sendBtn.innerText = '发送中...';
+        }
+
+        try {
+            console.log('调用 getVerificationCode, 邮箱:', email);
             
-            if (user) {
-                statusDiv.innerHTML = `
-                    <span class="text-sm font-semibold text-white">${user.email || '已登录'}</span>
-                    <button onclick="logout()" class="ml-2 text-sm bg-red-600 px-3 py-1 rounded hover:bg-red-700 transition">退出</button>
-                `;
+            const verificationInfo = await this.auth.getVerificationCode({
+                email: email,
+            });
+            
+            console.log('验证码发送成功:', verificationInfo);
+            this.currentVerificationInfo = verificationInfo;
+            alert('✅ 验证码已发送，请检查您的邮箱（包括垃圾邮件）');
+            
+        } catch (error) {
+            console.error('发送验证码失败:', error);
+            
+            let errorMessage = '发送失败：';
+            if (error.code) {
+                errorMessage += `错误码: ${error.code}`;
+            } else if (error.message) {
+                errorMessage += error.message;
             } else {
-                statusDiv.innerHTML = `
-                    <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded shadow text-sm font-semibold transition">
-                        Login / Register
-                    </button>
-                `;
-            }
-        }
-
-        // 6. 退出登录
-        function logout() {
-            if (!auth) {
-                alert('认证服务未就绪，请刷新页面');
-                return;
-            }
-            auth.signOut().then(() => {
-                console.log('退出成功');
-                alert('您已退出登录');
-            }).catch(error => {
-                console.error('退出失败:', error);
-            });
-        }
-
-        // 7. 打开登录模态框
-        function openAuthModal() {
-            document.getElementById('auth-modal').classList.remove('hidden');
-            currentVerificationInfo = null;
-            document.getElementById('auth-email').value = '';
-        }
-
-        // 8. 关闭登录模态框
-        function closeAuthModal() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        }
-
-        // 9. 发送验证码
-        async function sendVerificationCode() {
-            console.log('sendVerificationCode 被调用');
-            
-            if (!auth) {
-                alert('认证服务未初始化，请刷新页面重试');
-                console.error('auth 未初始化');
-                return;
-            }
-
-            const emailInput = document.getElementById('auth-email');
-            if (!emailInput) {
-                console.error('找不到邮箱输入框');
-                return;
+                errorMessage += '未知错误';
             }
             
-            const email = emailInput.value.trim();
-            if (!email) {
-                alert('请输入邮箱');
-                return;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('请输入正确的邮箱格式');
-                return;
-            }
-
-            const sendBtn = document.querySelector('#auth-modal button:nth-child(1)');
-            const originalText = sendBtn ? sendBtn.innerText : '发送验证码';
+            alert(errorMessage);
+        } finally {
             if (sendBtn) {
-                sendBtn.disabled = true;
-                sendBtn.innerText = '发送中...';
-            }
-
-            try {
-                console.log('调用 auth.getVerificationCode, 邮箱:', email);
-                
-                const verificationInfo = await auth.getVerificationCode({
-                    email: email,
-                });
-                
-                console.log('验证码发送成功:', verificationInfo);
-                currentVerificationInfo = verificationInfo;
-                alert('✅ 验证码已发送，请检查您的邮箱（包括垃圾邮件）');
-                
-            } catch (error) {
-                console.error('发送验证码失败:', error);
-                
-                let errorMessage = '发送失败：';
-                if (error.code) {
-                    errorMessage += `错误码: ${error.code}`;
-                } else if (error.message) {
-                    errorMessage += error.message;
-                } else {
-                    errorMessage += '未知错误';
-                }
-                
-                alert(errorMessage);
-            } finally {
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.innerText = originalText;
-                }
+                sendBtn.disabled = false;
+                sendBtn.innerText = originalText;
             }
         }
-
-        // 10. 使用验证码登录
-        async function signInWithCode() {
-            if (!auth) {
-                alert('认证服务未初始化，请刷新页面重试');
-                return;
-            }
-
-            const emailInput = document.getElementById('auth-email');
-            if (!emailInput) return;
-            
-            const email = emailInput.value.trim();
-            const code = prompt('请输入您收到的6位验证码');
-
-            if (!email || !code || !currentVerificationInfo) {
-                alert('请先获取验证码，并输入验证码');
-                return;
-            }
-
-            if (!/^\d{6}$/.test(code)) {
-                alert('请输入6位数字验证码');
-                return;
-            }
-
-            try {
-                await auth.signInWithEmailLink({
-                    email: email,
-                    verificationCode: code,
-                    verificationInfo: currentVerificationInfo,
-                });
-                alert('✅ 登录成功！');
-                closeAuthModal();
-            } catch (error) {
-                console.error('登录失败:', error);
-                alert('登录失败：' + (error.message || '验证码错误或已过期'));
-            } finally {
-                currentVerificationInfo = null;
-            }
+    },
+    
+    // 使用验证码登录
+    signInWithCode: async function() {
+        if (!this.auth) {
+            alert('认证服务未初始化，请刷新页面重试');
+            return;
         }
 
-        // 11. 下载函数 (增加登录保护)
-        function handleDownload(filename) {
-            if (!auth) {
-                alert('认证服务未初始化，请刷新页面');
-                return;
-            }
-            
-            const user = auth.currentUser;
-            if (!user) {
-                alert('请先登录后再下载数据');
-                openAuthModal();
-                return;
-            }
-            alert(`下载权限验证通过。正在准备下载 ${filename}...`);
-            // 实际下载代码可以放在这里
+        const emailInput = document.getElementById('auth-email');
+        if (!emailInput) return;
+        
+        const email = emailInput.value.trim();
+        const code = prompt('请输入您收到的6位验证码');
+
+        if (!email || !code || !this.currentVerificationInfo) {
+            alert('请先获取验证码，并输入验证码');
+            return;
         }
 
-        function handleDownloadGriddedExcel() {
-            if (!auth) {
-                alert('认证服务未初始化，请刷新页面');
-                return;
-            }
-            
-            const user = auth.currentUser;
-            if (!user) {
-                alert('请先登录后再下载数据');
-                openAuthModal();
-                return;
-            }
-            alert(`下载权限验证通过。正在准备下载 网格化清单.xlsx...`);
+        if (!/^\d{6}$/.test(code)) {
+            alert('请输入6位数字验证码');
+            return;
         }
+
+        try {
+            await this.auth.signInWithEmailLink({
+                email: email,
+                verificationCode: code,
+                verificationInfo: this.currentVerificationInfo,
+            });
+            alert('✅ 登录成功！');
+            this.closeAuthModal();
+        } catch (error) {
+            console.error('登录失败:', error);
+            alert('登录失败：' + (error.message || '验证码错误或已过期'));
+        } finally {
+            this.currentVerificationInfo = null;
+        }
+    },
+    
+    // 检查登录状态（用于下载）
+    checkLogin: function() {
+        if (!this.auth) {
+            alert('认证服务未初始化，请刷新页面');
+            return false;
+        }
+        
+        const user = this.auth.currentUser;
+        if (!user) {
+            alert('请先登录后再下载数据');
+            this.openAuthModal();
+            return false;
+        }
+        return true;
+    }
+};
+
+// 立即初始化云开发
+const initResult = cloudAuth.init();
+console.log('云开发初始化结果:', initResult);
+
+// ==================== 下载函数（使用cloudAuth对象）====================
+function handleDownload(filename) {
+    if (cloudAuth.checkLogin()) {
+        alert(`下载权限验证通过。正在准备下载 ${filename}...`);
+        // 实际下载代码可以放在这里
+    }
+}
+
+function handleDownloadGriddedExcel() {
+    if (cloudAuth.checkLogin()) {
+        alert(`下载权限验证通过。正在准备下载 网格化清单.xlsx...`);
+    }
+}
+
 
         // ==================== 以下是原有的图表和数据函数 ====================
         // 通用工具函数
