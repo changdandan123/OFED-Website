@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>OFED 数据管理后台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <!-- 添加简单登录验证 -->
+    <script>
+        // 简单的登录验证（实际生产环境需要更安全的验证）
+        const ADMIN_PASSWORD = "ofed2026"; // 建议修改为复杂密码
+        
+        function checkLogin() {
+            if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('admin-panel').classList.add('hidden');
+            } else {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+            }
+        }
+        
+        function login() {
+            const pwd = document.getElementById('password').value;
+            if (pwd === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                checkLogin();
+                loadDataList();
+            } else {
+                alert('密码错误');
+            }
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            checkLogin();
+        }
+    </script>
+</head>
+<body class="bg-gray-100 p-8" onload="checkLogin()">
+    <!-- 登录表单 -->
+    <div id="login-form" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow mt-20 hidden">
+        <h2 class="text-2xl font-bold mb-6 text-center">管理员登录</h2>
+        <input type="password" id="password" placeholder="请输入密码" 
+               class="w-full border p-3 rounded mb-4">
+        <button onclick="login()" 
+                class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700">
+            登录
+        </button>
+    </div>
+    
+    <!-- 管理面板 -->
+    <div id="admin-panel" class="hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-blue-900">OFED 数据管理后台</h1>
+                <button onclick="logout()" 
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    退出登录
+                </button>
+            </div>
+            
+            <!-- 数据文件管理 -->
+            <div class="bg-white p-6 rounded-xl shadow mb-8">
+                <h2 class="text-xl font-bold mb-4">数据文件管理</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="border p-4 rounded">
+                        <h3 class="font-bold mb-2">inventory.csv</h3>
+                        <p class="text-sm text-gray-500 mb-2">清单排放数据</p>
+                        <input type="file" id="upload-inventory" accept=".csv" class="text-sm mb-2">
+                        <button onclick="uploadFile('inventory')" 
+                                class="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            上传更新
+                        </button>
+                        <button onclick="downloadFile('inventory')" 
+                                class="bg-blue-600 text-white px-3 py-1 rounded text-sm ml-2">
+                            下载
+                        </button>
+                    </div>
+                    <div class="border p-4 rounded">
+                        <h3 class="font-bold mb-2">inversion.csv</h3>
+                        <p class="text-sm text-gray-500 mb-2">反演排放数据</p>
+                        <input type="file" id="upload-inversion" accept=".csv" class="text-sm mb-2">
+                        <button onclick="uploadFile('inversion')" 
+                                class="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            上传更新
+                        </button>
+                        <button onclick="downloadFile('inversion')" 
+                                class="bg-blue-600 text-white px-3 py-1 rounded text-sm ml-2">
+                            下载
+                        </button>
+                    </div>
+                    <div class="border p-4 rounded">
+                        <h3 class="font-bold mb-2">comparison.csv</h3>
+                        <p class="text-sm text-gray-500 mb-2">对比数据</p>
+                        <input type="file" id="upload-comparison" accept=".csv" class="text-sm mb-2">
+                        <button onclick="uploadFile('comparison')" 
+                                class="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            上传更新
+                        </button>
+                        <button onclick="downloadFile('comparison')" 
+                                class="bg-blue-600 text-white px-3 py-1 rounded text-sm ml-2">
+                            下载
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 在线数据编辑 -->
+            <div class="bg-white p-6 rounded-xl shadow mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">在线数据编辑</h2>
+                    <div>
+                        <select id="data-select" class="border p-2 rounded" onchange="loadDataForEdit()">
+                            <option value="inventory">inventory.csv</option>
+                            <option value="inversion">inversion.csv</option>
+                            <option value="comparison">comparison.csv</option>
+                        </select>
+                        <button onclick="saveEditedData()" 
+                                class="bg-blue-600 text-white px-4 py-2 rounded ml-2">
+                            保存修改
+                        </button>
+                    </div>
+                </div>
+                <div id="data-editor" class="overflow-auto max-h-96 border rounded">
+                    <!-- 数据表格会动态加载到这里 -->
+                    <p class="text-center text-gray-400 p-4">请选择要编辑的数据文件</p>
+                </div>
+            </div>
+            
+            <!-- 操作日志 -->
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h2 class="text-xl font-bold mb-4">最近操作记录</h2>
+                <div id="operation-log" class="text-sm text-gray-600">
+                    <!-- 操作记录会显示在这里 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 数据存储变量
+        let currentData = [];
+        let currentFile = '';
+        
+        // 加载数据用于编辑
+        function loadDataForEdit() {
+            currentFile = document.getElementById('data-select').value;
+            
+            // 尝试从 localStorage 读取数据，如果没有则提示上传
+            const savedData = localStorage.getItem(currentFile);
+            if (savedData) {
+                currentData = JSON.parse(savedData);
+                renderDataTable();
+            } else {
+                document.getElementById('data-editor').innerHTML = 
+                    '<p class="text-center text-gray-400 p-4">请先上传数据文件</p>';
+            }
+        }
+        
+        // 渲染数据表格
+        function renderDataTable() {
+            if (!currentData || currentData.length === 0) return;
+            
+            let html = '<table class="min-w-full divide-y divide-gray-200">';
+            
+            // 表头
+            html += '<thead class="bg-gray-50"><tr>';
+            Object.keys(currentData[0]).forEach(key => {
+                html += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">${key}</th>`;
+            });
+            html += '<th class="px-4 py-2">操作</th></tr></thead><tbody>';
+            
+            // 数据行
+            currentData.forEach((row, index) => {
+                html += '<tr class="hover:bg-gray-50">';
+                Object.values(row).forEach(value => {
+                    html += `<td class="px-4 py-2 border-t"><input type="text" 
+                        value="${value}" class="w-full border-none focus:ring-0"
+                        onchange="updateCell(${index}, '${Object.keys(row)[Object.values(row).indexOf(value)]}', this.value)"></td>`;
+                });
+                html += `<td class="px-4 py-2 border-t">
+                    <button onclick="deleteRow(${index})" class="text-red-600">删除</button>
+                </td></tr>`;
+            });
+            
+            html += '</tbody></table>';
+            
+            // 添加新行按钮
+            html += '<div class="p-4"><button onclick="addNewRow()" class="bg-green-600 text-white px-4 py-2 rounded">添加新行</button></div>';
+            
+            document.getElementById('data-editor').innerHTML = html;
+        }
+        
+        // 更新单元格
+        function updateCell(rowIndex, column, newValue) {
+            currentData[rowIndex][column] = newValue;
+            logOperation(`修改数据: 第${rowIndex+1}行, ${column}列`);
+        }
+        
+        // 添加新行
+        function addNewRow() {
+            if (currentData.length === 0) return;
+            
+            const newRow = {};
+            Object.keys(currentData[0]).forEach(key => {
+                newRow[key] = '';
+            });
+            currentData.push(newRow);
+            renderDataTable();
+            logOperation('添加新数据行');
+        }
+        
+        // 删除行
+        function deleteRow(index) {
+            currentData.splice(index, 1);
+            renderDataTable();
+            logOperation(`删除第${index+1}行数据`);
+        }
+        
+        // 保存编辑后的数据
+        function saveEditedData() {
+            localStorage.setItem(currentFile, JSON.stringify(currentData));
+            
+            // 导出为CSV文件
+            const csv = Papa.unparse(currentData);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = currentFile + '.csv';
+            link.click();
+            
+            logOperation('保存数据并导出CSV文件');
+            alert('数据已保存并下载，请将文件上传到服务器覆盖原文件');
+        }
+        
+        // 上传文件
+        function uploadFile(fileName) {
+            const fileInput = document.getElementById(`upload-${fileName}`);
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('请选择文件');
+                return;
+            }
+            
+            Papa.parse(file, {
+                header: true,
+                complete: function(results) {
+                    currentData = results.data;
+                    currentFile = fileName;
+                    localStorage.setItem(fileName, JSON.stringify(currentData));
+                    renderDataTable();
+                    logOperation(`上传文件: ${fileName}.csv`);
+                    alert('文件上传成功，数据已加载到编辑器');
+                }
+            });
+        }
+        
+        // 下载文件
+        function downloadFile(fileName) {
+            const savedData = localStorage.getItem(fileName);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const csv = Papa.unparse(data);
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName + '.csv';
+                link.click();
+                logOperation(`下载文件: ${fileName}.csv`);
+            } else {
+                alert('没有可下载的数据');
+            }
+        }
+        
+        // 记录操作日志
+        function logOperation(action) {
+            const logDiv = document.getElementById('operation-log');
+            const time = new Date().toLocaleString();
+            const logEntry = `<div class="py-1">[${time}] ${action}</div>`;
+            
+            if (logDiv.innerHTML === '暂无操作记录') {
+                logDiv.innerHTML = logEntry;
+            } else {
+                logDiv.innerHTML = logEntry + logDiv.innerHTML;
+            }
+            
+            // 保存日志到 localStorage
+            const logs = JSON.parse(localStorage.getItem('operationLogs') || '[]');
+            logs.unshift({ time, action });
+            localStorage.setItem('operationLogs', JSON.stringify(logs.slice(0, 50))); // 只保留最近50条
+        }
+        
+        // 加载历史操作日志
+        function loadOperationLogs() {
+            const logs = JSON.parse(localStorage.getItem('operationLogs') || '[]');
+            const logDiv = document.getElementById('operation-log');
+            
+            if (logs.length === 0) {
+                logDiv.innerHTML = '暂无操作记录';
+            } else {
+                logDiv.innerHTML = logs.map(log => 
+                    `<div class="py-1">[${log.time}] ${log.action}</div>`
+                ).join('');
+            }
+        }
+        
+        // 初始化
+        window.onload = function() {
+            checkLogin();
+            loadOperationLogs();
+        };
+    </script>
+</body>
+</html>
