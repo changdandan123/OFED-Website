@@ -4,28 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OFED - Ozone-depleting Substances & Fluorinated gases Emissions Database</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- ECharts - 使用国内CDN -->
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    
     <!-- PapaParse - 本地文件 -->
     <script src="papaparse.min.js"></script>
+    
     <!-- XLSX -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- 百度统计 (可选) -->
+    
+    <!-- 百度统计 -->
     <script>
         var _hmt = _hmt || [];
         (function() {
             var hm = document.createElement("script");
             hm.src = "https://hm.baidu.com/hm.js?b98d32e39411ab35b1f3077908f6ac54";
-            var s = document.getElementsByTagName("script")[0];
+            var s = document.getElementsByTagName("script")[0]; 
             s.parentNode.insertBefore(hm, s);
         })();
     </script>
-    <!-- 云开发 SDK (核心库) -->
-    <script src="https://unpkg.com/@cloudbase/js-sdk@2.9.0/lib/cloudbase.js"></script>
-    <!-- 云开发 SDK (登录认证模块) -->
-    <script src="https://unpkg.com/@cloudbase/js-sdk@2.9.0/lib/auth.js"></script>
+    
     <style>
         .page { display: none; }
         .page.active { display: block; animation: fadeIn 0.5s; }
@@ -34,6 +36,7 @@
         .method-box:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
+</head>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans">
 
@@ -58,9 +61,7 @@
     </nav>
 
     <main class="flex-grow">
-        <!-- 首页 (保持不变) -->
         <section id="home" class="page active">
-            <!-- ... 原有首页内容 ... -->
             <div class="bg-blue-50 py-6 border-b border-blue-100 text-center px-4">
                 <h1 class="text-4xl md:text-5xl font-extrabold text-blue-900 mb-6 max-w-5xl mx-auto">OFED: Ozone-depleting Substances & Fluorinated Gases Emissions Database</h1>
                 <p class="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
@@ -74,36 +75,441 @@
                </p>
             </div>
             <div class="container mx-auto px-4 py-8">
-                <!-- ... 更多首页内容 ... -->
+                <div class="grid md:grid-cols-2 gap-12 mb-8">
+                    <div class="bg-white p-8 rounded-xl border-l-4 border-blue-600 shadow-sm">
+                        <h2 class="text-2xl font-bold text-blue-900 mb-4">The Montreal Protocol</h2>
+                        <p class="text-gray-600">Successfully phased out most ODSs, safeguarding the stratospheric ozone layer for future generations.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl border-l-4 border-green-600 shadow-sm">
+                        <h2 class="text-2xl font-bold text-green-900 mb-4">UN Climate Change Conventions</h2>
+                        <p class="text-gray-600">Mandate the reduction of all greenhouse gases, including many F-gases, to mitigate global warming.</p>
+                    </div>
+                </div>
+                <div class="prose max-w-none text-gray-700 space-y-3 text-center">
+                    <p class="text-lg leading-relaxed">
+        Accurate quantification of atmospheric emissions is the cornerstone of global environmental governance. 
+        It transforms invisible chemical releases into actionable scientific insights, empowering researchers 
+        and policymakers to monitor mitigation progress with precision. By mapping the trajectory of these 
+        substances, we can identify critical emission hotspots, verify international compliance, and develop 
+        robust forecast models for future environmental outcomes.
+    </p>
+    <p class="text-lg leading-relaxed"> 
+        OFED serves as a vital strategic bridge, connecting the rigors of scientific measurement with the 
+        demands of effective policy-making for planetary health. We consolidate disparate, multi-source data—ranging 
+        from high-frequency atmospheric observations to granular industrial reporting—into a single, trusted, 
+        open-access resource.
+    </p>
+                    <div class="text-center pt-6">
+                        <span class="text-2xl font-serif italic text-blue-800">"Data for Action. Science for Protection."</span>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 mt-12"> <div class="method-box bg-white p-8 rounded-2xl shadow-sm border border-gray-100 cursor-pointer" onclick="showPage('inventory')">
+        <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Explore Results</span>
+        <h3 class="text-2xl font-bold mt-2 mb-4">Inventory Emissions</h3>
+        <p class="text-gray-500 mb-4">The bottom-up approach quantifies emissions using activity data (production and consumption) and emission factors.</p>
+        <span class="text-blue-600 font-semibold inline-flex items-center">View Database &rarr;</span>
+    </div>
+
+    <div class="method-box bg-white p-8 rounded-2xl shadow-sm border border-gray-100 cursor-pointer" onclick="showPage('inversion')">
+        <span class="text-green-600 font-bold uppercase tracking-widest text-sm">Explore Results</span>
+        <h3 class="text-2xl font-bold mt-2 mb-4">Inversion Emissions</h3>
+        <p class="text-gray-500 mb-4">The top-down approach quantifies emissions using observations, transport models, and inversion algorithms.</p>
+        <span class="text-green-600 font-semibold inline-flex items-center">View Database &rarr;</span>
+    </div>
+
+    <div class="method-box bg-white p-8 rounded-2xl shadow-sm border border-gray-100 cursor-pointer" onclick="showPage('comparison')">
+        <span class="text-indigo-600 font-bold uppercase tracking-widest text-sm">Cross-Study Comparison</span>
+        <h3 class="text-2xl font-bold mt-2 mb-4">OFED and Other Datasets</h3>
+        <p class="text-gray-500 mb-4">Comprehensive comparison between OFED results and other established global/regional emission datasets.</p>
+        <span class="text-indigo-600 font-semibold inline-flex items-center">Compare Data &rarr;</span>
+    </div>
+</div>
             </div>
         </section>
 
-        <!-- 为了节省篇幅，其他页面内容保持不变，请保留您原有的所有页面内容 -->
+<section id="inventory" class="page container mx-auto px-4 py-12">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <div class="flex justify-between mb-4 border-b pb-3">
+            <div>
+                <h2 class="text-2xl font-bold text-blue-900">Inventory Emissions Visualization</h2>
+                <p class="text-gray-500 text-sm">Provide both total emissions and sectoral breakdowns.</p>
+            </div>
+            <button onclick="handleDownload('inventory.csv')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                Download Data
+            </button>
+        </div>
 
-        <!-- 登录模态框 - 重要：确保按钮调用的是全局函数 -->
-        <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-            <div class="bg-white w-full max-w-md rounded-xl p-6">
-                <h2 class="text-xl font-bold mb-4">邮箱登录/注册</h2>
-                <input id="auth-email" class="w-full border p-2 rounded mb-4" placeholder="请输入您的邮箱" type="email">
-                <div class="flex justify-between space-x-2">
-                    <!-- 注意：这里调用的是 window.sendVerificationCode 和 window.signInWithCode -->
-                    <button onclick="window.sendVerificationCode()" class="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
-                        发送验证码
-                    </button>
-                    <button onclick="window.signInWithCode()" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        登录
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Substance</label>
+        <select id="substance-select" onchange="handleMainFilterChange()" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+            <option>CFC-11</option><option>CFC-12</option><option>CFC-113</option><option>HCFC-22</option><option>HCFC-141b</option>
+            <option>HCFC-142b</option><option>HFC-134a</option><option>HFC-143a</option><option>HFC-32</option>
+            <option>HFC-125</option><option>HFC-152a</option><option>HFC-227ea</option><option>HFC-236fa</option><option>HFC-245fa</option><option>HFC-365mfc</option><option>SF6</option>
+            <option>NF3</option><option>CF4</option><option>C2F6</option><option>C3F8</option><option>c-C4F8</option><option>CCl4</option><option>CH3Br</option><option>CH3CCl3</option>
+            <option>Halon-1211</option><option>Halon-1301</option>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Region</label>
+        <select id="region-select" onchange="handleMainFilterChange()" class="w-full border rounded-lg p-2 text-sm">
+            <option>China</option>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Start Year</label>
+        <select id="start-year" class="w-full border rounded-lg p-2 text-sm">
+            <option>1980</option>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">End Year</label>
+        <select id="end-year" class="w-full border rounded-lg p-2 text-sm">
+            <option>2024</option>
+        </select>
+    </div>
+
+    <div class="md:col-span-2 flex items-end space-x-2">
+        
+        <button id="btn-line" onclick="setActiveButton('btn-line'); updateInventoryChart('line')" 
+                class="chart-btn w-24 bg-gray-200 text-gray-800 text-xs font-bold py-2.5 rounded hover:bg-gray-300 transition uppercase whitespace-nowrap">
+            Total (Line)
+        </button>
+
+        <div id="reference-wrapper" class="flex-1">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Source (for Sector)</label>
+            <select id="reference-select" class="w-full border rounded-lg p-2 text-sm">
+                </select>
+        </div>
+
+        <button id="btn-bar" onclick="setActiveButton('btn-bar'); updateInventoryChart('bar')" 
+                class="chart-btn w-24 bg-gray-200 text-gray-800 text-xs font-bold py-2.5 rounded hover:bg-gray-300 transition uppercase whitespace-nowrap">
+            Sector (Bar)
+        </button>
+    </div>
+</div>
+
+        <div id="inventory-chart" class="w-full h-[500px]" style="width: 100%; height: 500px;"></div>
+    </div>
+
+	<!-- ========== Grid Inventory Emissions (NEW) ========== -->
+	<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+	  <div class="flex justify-between mb-4 border-b pb-3">
+		<div>
+		  <h2 class="text-2xl font-bold text-blue-900">Gridded Inventory Emissions</h2>
+		  <p class="text-gray-500 text-sm">Grid-based emissions inventory.</p>
+		</div>
+		<a href="javascript:void(0)" onclick="handleDownloadGriddedExcel()" class="bg-green-600 text-white px-4 py-4 rounded hover:bg-green-700 transition">
+		Download Gridded Excel
+		</a>
+	  </div>
+
+	  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+		<div>
+		  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Substance</label>
+		  <select id="grid-substance" class="w-full border rounded-lg p-2 text-sm"></select>
+		</div>
+
+		<div>
+		  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Region</label>
+		  <select id="grid-region" class="w-full border rounded-lg p-2 text-sm">
+			<option value="China">China</option>
+		  </select>
+		</div>
+
+		<div>
+		  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Year</label>
+		  <select id="grid-year" class="w-full border rounded-lg p-2 text-sm"></select>
+		</div>
+
+		<div class="flex items-end">
+		  <button onclick="updateGridInventoryChart()" class="w-full bg-blue-900 text-white font-bold py-2 rounded hover:bg-black transition uppercase text-xs h-[38px]">
+			Update Grid Map
+		  </button>
+		</div>
+	  </div>
+
+	  <div id="grid-inventory-chart" class="w-full h-[520px]"></div>
+
+	  <p class="text-xs text-gray-500 mt-3">
+		Wu et al. Research on Assessment and Early Warning of Emission Reduction Effectiveness for Controlled Halogenated Hydrocarbons under the Convention, Project 01: Acceptance Report on the Development of a Dynamic Emission Inventory and Research on Emission Control. 2019-2021
+	  </p>
+	</div>
+	<!-- ================================================== -->
+
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4 border-l-4 border-blue-600 pl-4">Methodology</h3>
+        <p class="text-gray-600 leading-relaxed italic">
+            The bottom-up inventory approach estimates emissions based on activity data (production and consumption) and emission factors, in accordance with the emission mechanisms specific to each sector. For detailed methodologies, please refer to the publications listed below.
+        </p>
+    </div>
+
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+        <h3 class="text-xl font-bold text-gray-900 mb-6">Publications</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b">
+                        <th class="p-4 font-bold">Study</th>
+                        <th class="p-4 font-bold">Substance</th>
+                        <th class="p-4 font-bold">Region</th>
+                        <th class="p-4 font-bold">Year</th>
+                        <th class="p-4 font-bold">Reference</th>
+                    </tr>
+                </thead>
+                <tbody id="publication-table-body" class="divide-y">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="inversion" class="page container mx-auto px-4 py-12">
+    <div class="bg-white p-6 rounded-xl shadow mb-10">
+        
+        <div class="flex justify-between mb-4 border-b pb-3">
+            <div>
+                <h2 class="text-2xl font-bold text-green-900">Inversion Emission</h2>
+                <p class="text-sm text-gray-500">Top-down estimations with uncertainty ranges (Mean ± SD)</p>
+            </div>
+            <button onclick="handleDownload('inversion.csv')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                Download Data
+            </button>
+        </div>
+
+        <div class="grid md:grid-cols-5 gap-4 mb-6">
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Substance</label>
+                <select id="inv-substance" onchange="handleInvSubstanceChange()" class="w-full border p-2 rounded text-sm">
+                   <option>CFC-11</option><option>CFC-12</option>
+                    <option>HCFC-22</option><option>HCFC-141b</option><option>HCFC-142b</option><option>HCFC-124</option>
+                    <option>HFC-134a</option><option>HFC-143a</option><option>HFC-32</option>
+                    <option>HFC-125</option><option>HFC-152a</option><option>HFC-23</option><option>HFC-227ea</option><option>HFC-236fa</option><option>HFC-245fa</option><option>HFC-365mfc</option><option>SF6</option><option>CCl4</option><option>CH3Br</option><option>CH3CCl3</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Region</label>
+                <select id="inv-country" onchange="handleInvFilterChange()" class="w-full border p-2 rounded text-sm">
+                    <option>China</option><option>Northern China</option><option>Eastern China</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Start Year</label>
+                <select id="inv-start-year" class="w-full border p-2 rounded text-sm">
+                    </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">End Year</label>
+                <select id="inv-end-year" class="w-full border p-2 rounded text-sm"></select>
+            </div>
+
+            <div class="flex items-end">
+                <button onclick="renderInversionChart()" class="w-full bg-green-700 text-white font-bold py-2 rounded hover:bg-green-800 transition uppercase text-xs h-[38px]">
+                    Update Chart
+                </button>
+            </div>
+        </div>
+
+        <div id="inversion-chart" class="w-full h-[520px]"></div>
+    </div>
+
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4 border-l-4 border-green-600 pl-4">Methodology</h3>
+        <p class="text-gray-600 leading-relaxed italic">
+            The top-down approach utilizes atmospheric concentration observations, integrated with atmospheric transport models and inversion algorithms, to estimate total emissions and their spatial distributions. This methodology is generally classified into the interspecies ratio method (ISC) and the inversion method. For detailed methodologies, please refer to the publications listed below.
+        </p>
+    </div>
+
+<div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+        <h3 class="text-xl font-bold text-gray-900 mb-6">Publications</h3>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+            <thead>
+                <tr class="bg-gray-50 border-b">
+                        <th class="p-4 font-bold">Study</th>
+                        <th class="p-4 font-bold">Substance</th>
+                        <th class="p-4 font-bold">Region</th>
+                        <th class="p-4 font-bold">Year</th>
+                        <th class="p-4 font-bold">Reference</th>
+                </tr>
+            </thead>
+            <tbody id="inversion-ref-table" class="divide-y">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+</section>
+
+        <section id="comparison" class="page container mx-auto px-4 py-12">
+            <div class="bg-white p-6 rounded-xl shadow mb-10">
+                <div class="flex justify-between mb-4 border-b pb-3">
+                    <div>
+                        <h2 class="text-2xl font-bold text-indigo-900">OFED & Other Datasets</h2>
+                        <p class="text-sm text-gray-500">Comparison of Bottom-up inventories and Top-down (Inverse Modeling & ISC) estimates.</p>
+                    </div>
+                    <button onclick="handleDownload('comparison.csv')" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
+                        Download Data
                     </button>
                 </div>
-                <p class="text-xs text-gray-500 mt-3">
-                    我们将向您的邮箱发送6位验证码。如果未收到，请检查垃圾邮件。
-                </p>
-                <button onclick="closeAuthModal()" class="text-gray-400 text-xs mt-3 hover:text-gray-600 transition">取消</button>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 items-end">
+
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Substance</label>
+        <select id="comp-substance" onchange="handleCompSubstanceChange()" class="w-full border p-2 rounded text-sm h-[38px] bg-white">
+            <option>CFC-11</option><option>CFC-12</option><option>CFC-113</option><option>CFC-13</option><option>CFC-114</option><option>CFC-115</option><option>HCFC-22</option><option>HCFC-141b</option><option>HCFC-142b</option><option>HCFC-124</option><option>HCFC-133a</option><option>HCFC-132b</option><option>HFC-134a</option>
+            <option>HFC-143a</option><option>HFC-32</option><option>HFC-125</option><option>HFC-152a</option><option>HFC-23</option><option>HFC-227ea</option><option>HFC-236fa</option><option>HFC-245fa</option><option>HFC-365mfc</option><option>HFC-4310mee</option><option>SF6</option><option>NF3</option><option>CF4</option><option>C2F6</option><option>C3F8</option><option>c-C4F8</option>
+            <option>HFO-1234yf</option><option>HFO-1234ze</option><option>HCFO-1233zd</option><option>CH3Cl</option><option>CH2Cl2</option><option>CHCl3</option><option>CCl4</option><option>PCE</option><option>TCE</option><option>CH3Br</option><option>SO2F2</option><option>CH3CCl3</option><option>H-1211</option><option>H-1301</option><option>H-2402</option>
+        </select>
+    </div>
+
+    <div>
+    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Region</label>
+    <select id="comp-region" onchange="updateComparisonYearRange(); " class="w-full border p-2 rounded text-sm h-[38px] bg-white">
+        <option value="" disabled selected>Please select Substance first</option>
+    </select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Start Year</label>
+        <select id="comp-start-year" class="w-full border p-2 rounded text-sm h-[38px] bg-white"></select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">End Year</label>
+        <select id="comp-end-year" class="w-full border p-2 rounded text-sm h-[38px] bg-white"></select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Method Category</label>
+        <select id="comp-method-filter" onchange="updateComparisonYearRange(); " class="w-full border p-2 rounded text-sm h-[38px] bg-white">
+            <option value="All">All Methods</option>
+            <option value="Bottom-up">Bottom-up</option>
+            <option value="Top-down">Top-down (Inverse Modeling/ISC)</option>
+        </select>
+    </div>
+
+    <div>
+        <button onclick="renderComparisonChart()" class="w-full bg-indigo-700 text-white font-bold py-2 rounded hover:bg-indigo-800 transition uppercase text-xs h-[38px] flex items-center justify-center">
+            Update Comparison
+        </button>
+    </div>
+</div>
+                <div id="comparison-chart" class="w-full h-[600px]"></div>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 border-l-4 border-indigo-600 pl-4">Publications</h3>
+<div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+            <thead>
+                <tr class="bg-gray-50 border-b">
+                        <th class="p-4 font-bold">Study</th>
+                        <th class="p-4 font-bold">Substance</th>
+                        <th class="p-4 font-bold">Region</th>
+                        <th class="p-4 font-bold">Year</th>
+                        <th class="p-4 font-bold">Method</th>
+                        <th class="p-4 font-bold">Reference</th>
+                </tr>
+            </thead>
+<tbody id="comp-table-body" class="divide-y divide-gray-200">
+            </tbody>
+    </table>
+</div>
+            </div>
+        </section>
+
+<section id="about" class="page">
+    <div class="bg-blue-50 py-6 border-b border-blue-100 text-center px-4 mb-8">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-4">Meet the Team</h1>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+            Our team is dedicated to the research of ODSs and F-gases emissions.
+        </p>
+    </div>
+
+    <div class="container mx-auto px-4 pb-12 max-w-6xl">
+        
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4 border-l-4 border-blue-600 pl-4">Team Introduction</h2>
+            <div class="text-gray-600 space-y-4 leading-relaxed text-justify">
+    <p>
+        <span class="font-semibold text-blue-900">Led by Zhejiang University</span> in collaboration with Peking University and Beijing Jiaotong University, our interdisciplinary team serves as co-authors of the <span class="italic">WMO Scientific Assessment of Ozone Depletion</span>. We are dedicated to resolving the challenges of emissions sourcing for ODSs and F-gases.
+    </p>
+    <p>
+        By integrating <span class="font-medium">emission inventories, atmospheric observations, and inversion modeling</span>, we have established a dual-accounting system that bridges "bottom-up" and "top-down" approaches. Our research focuses on the environmental impacts of halogenated substances on ozone depletion and climate change, alongside the development of environmental policies. Through high-precision data, we provide vital scientific support for ozone layer protection, carbon neutrality, and global climate mitigation, contributing to both national and international compliance.
+    </p>
+</div>
+        </div>
+
+<div class="mb-4">
+    <h2 class="text-2xl font-bold text-center text-gray-900 mb-6">Core Members</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+        
+        <div class="w-32 h-32 mx-auto mb-6 relative bg-blue-100 rounded-full flex items-center justify-center border-4 border-blue-50 shadow-sm">
+    <span class="text-3xl font-bold text-blue-600">XF</span>
+</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Xuekun Fang</h3>
+            <p class="text-blue-600 font-medium mb-2">Zhejiang University</p>
+            <div class="text-sm text-gray-500 space-y-1">
+                <p class="text-blue-500 break-all font-mono">fangxuekun@zju.edu.cn</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center hover:shadow-md transition duration-300">
+            <div class="w-32 h-32 mx-auto mb-6 relative">
+                <img src="hu.jpg" alt="Jianxin Hu" 
+                     class="w-full h-full rounded-full object-cover border-4 border-green-50 shadow-sm">
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Jianxin Hu</h3>
+            <p class="text-green-600 font-medium mb-2">Peking University</p>
+            <div class="text-sm text-gray-500 space-y-1">
+                <p class="text-blue-500 break-all font-mono">jianxin@pku.edu.cn</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center hover:shadow-md transition duration-300">
+            <div class="w-32 h-32 mx-auto mb-6 relative">
+                <img src="wu.jpg" alt="Jing Wu" 
+                     class="w-full h-full rounded-full object-cover border-4 border-indigo-50 shadow-sm">
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Jing Wu</h3>
+            <p class="text-indigo-600 font-medium mb-2">Beijing Jiaotong University</p>
+            <div class="text-sm text-gray-500 space-y-1">
+                <p class="text-blue-500 break-all font-mono">wujing.108@bjtu.edu.cn</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+    </div>
+</section>
+
+        <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white w-full max-w-md rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4" id="auth-title">Login</h2>
+                <div id="register-fields" class="space-y-2 hidden">
+                    <input id="reg-name" class="w-full border p-2 rounded" placeholder="Full Name">
+                    <input id="reg-country" class="w-full border p-2 rounded" placeholder="Country">
+                    <input id="reg-org" class="w-full border p-2 rounded" placeholder="Organization">
+                    <input id="reg-dep" class="w-full border p-2 rounded" placeholder="Department">
+                </div>
+                <input id="auth-email" class="w-full border p-2 rounded mt-2" placeholder="Email">
+                <div class="flex justify-between mt-4">
+                    <button onclick="submitAuth()" class="bg-blue-600 text-white px-4 py-2 rounded">Submit</button>
+                    <button id="toggle-btn" onclick="toggleAuthMode()" class="text-blue-600 text-sm">Switch to Register</button>
+                </div>
+                <button onclick="closeAuthModal()" class="text-gray-400 text-xs mt-3">Cancel</button>
             </div>
         </div>
 
     </main>
 
-    <footer class="bg-gray-900 text-gray-400 py-6 border-t border-gray-800">
+<footer class="bg-gray-900 text-gray-400 py-6 border-t border-gray-800">
         <div class="container mx-auto px-4 text-center">
             <p class="text-white mb-2">Ozone-depleting Substances & Fluorinated gases Emissions Database (OFED)</p>
             <p class="text-sm">If there are any omissions or errors, please inform us by email: <a href="mailto:contact@ofed.com" class="text-blue-400 underline">contact@ofed.com</a></p>
@@ -112,333 +518,315 @@
     </footer>
 
     <script>
-        // ==================== 全局变量 ====================
-        let inventoryData = [];
-        let inversionData = [];
-        let comparisonData = [];
-        let currentInvChartType = 'line';
-        const myExtendedColors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#2f4554', '#61a0a8', '#d48265'];
-        const currentYear = new Date().getFullYear();
-        const yearsRange = Array.from({length: currentYear - 1980 + 2}, (_, i) => 1980 + i);
+    let inventoryData = [];
+    let inversionData = [];
+    let comparisonData = [];
+    let isLoggedIn = false;
+    let currentInvChartType = 'line';
+    let authMode = 'login';
 
-        // 网格地图相关变量
-        let gridWorkbook = null;
-        let gridSheetNames = [];
-        let gridYearsCache = {};
-        let gridDataCache = {};
-        let chinaBorderLines = null;
-        const GRID_XLSX_FILE = '网格化清单.xlsx';
+    const myExtendedColors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#2f4554', '#61a0a8', '#d48265'];
+    const currentYear = new Date().getFullYear();
+    const yearsRange = Array.from({length: currentYear - 1980 + 2}, (_, i) => 1980 + i);
 
-        // ==================== 云开发登录逻辑（简化版）====================
-        // 直接挂载到window对象，确保全局可用
-        window.auth = null;
-        window.currentVerificationInfo = null;
-
-        // 初始化云开发
-        console.log('开始初始化云开发...');
-        try {
-            const app = cloudbase.init({
-                env: "website-8gi0oq10bc63b733" // ⚠️ 请替换成你的真实环境ID！
-            });
-            window.auth = app.auth({ persistence: 'local' });
-            console.log('✅ 云开发初始化成功', window.auth);
-        } catch (error) {
-            console.error('❌ 云开发初始化失败:', error);
-        }
-
-        // 监听登录状态
-        if (window.auth) {
-            window.auth.onAuthStateChanged(function(user) {
-                console.log('登录状态变化:', user ? user.email : '未登录');
-                updateUserStatus(user);
-            });
-        }
-
-        // 更新用户界面
-        function updateUserStatus(user) {
-            const statusDiv = document.getElementById('user-status');
-            if (!statusDiv) return;
-            
-            if (user) {
-                statusDiv.innerHTML = `
-                    <span class="text-sm font-semibold text-white">${user.email || '已登录'}</span>
-                    <button onclick="logout()" class="ml-2 text-sm bg-red-600 px-3 py-1 rounded hover:bg-red-700 transition">退出</button>
-                `;
-            } else {
-                statusDiv.innerHTML = `
-                    <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded shadow text-sm font-semibold transition">
-                        Login / Register
-                    </button>
-                `;
-            }
-        }
-
-        // 退出登录
-        window.logout = function() {
-            if (!window.auth) {
-                alert('认证服务未初始化');
-                return;
-            }
-            window.auth.signOut().then(() => {
-                alert('已退出登录');
-            }).catch(error => {
-                console.error('退出失败:', error);
-            });
-        };
-
-        // 打开模态框
-        window.openAuthModal = function() {
-            document.getElementById('auth-modal').classList.remove('hidden');
-            window.currentVerificationInfo = null;
-        };
-
-        // 关闭模态框
-        window.closeAuthModal = function() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        };
-
-        // 发送验证码 - 挂载到window
-        window.sendVerificationCode = async function() {
-            console.log('发送验证码被点击');
-            
-            if (!window.auth) {
-                alert('认证服务未初始化，请刷新页面重试');
-                return;
-            }
-
-            const emailInput = document.getElementById('auth-email');
-            if (!emailInput) {
-                alert('邮箱输入框不存在');
-                return;
-            }
-            
-            const email = emailInput.value.trim();
-            if (!email) {
-                alert('请输入邮箱');
-                return;
-            }
-
-            // 简单的邮箱验证
-            if (!email.includes('@') || !email.includes('.')) {
-                alert('请输入正确的邮箱格式');
-                return;
-            }
-
-            // 禁用按钮
-            const sendBtn = document.querySelector('#auth-modal button:nth-child(1)');
-            if (sendBtn) {
-                sendBtn.disabled = true;
-                sendBtn.innerText = '发送中...';
-            }
-
-            try {
-                console.log('调用发送验证码API，邮箱:', email);
-                
-                const verificationInfo = await window.auth.getVerificationCode({
-                    email: email,
-                });
-                
-                console.log('发送成功:', verificationInfo);
-                window.currentVerificationInfo = verificationInfo;
-                alert('✅ 验证码已发送，请检查您的邮箱');
-                
-            } catch (error) {
-                console.error('发送失败:', error);
-                alert('发送失败：' + (error.message || '未知错误'));
-            } finally {
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.innerText = '发送验证码';
-                }
-            }
-        };
-
-        // 登录 - 挂载到window
-        window.signInWithCode = async function() {
-            if (!window.auth) {
-                alert('认证服务未初始化');
-                return;
-            }
-
-            const emailInput = document.getElementById('auth-email');
-            if (!emailInput) return;
-            
-            const email = emailInput.value.trim();
-            const code = prompt('请输入您收到的6位验证码');
-
-            if (!email || !code || !window.currentVerificationInfo) {
-                alert('请先获取验证码');
-                return;
-            }
-
-            try {
-                await window.auth.signInWithEmailLink({
-                    email: email,
-                    verificationCode: code,
-                    verificationInfo: window.currentVerificationInfo,
-                });
-                alert('✅ 登录成功！');
-                closeAuthModal();
-            } catch (error) {
-                console.error('登录失败:', error);
-                alert('登录失败：' + (error.message || '验证码错误'));
-            } finally {
-                window.currentVerificationInfo = null;
-            }
-        };
-
-        // 下载函数
-        window.handleDownload = function(filename) {
-            if (!window.auth || !window.auth.currentUser) {
-                alert('请先登录');
-                openAuthModal();
-                return;
-            }
-            alert(`下载 ${filename}`);
-        };
-
-        window.handleDownloadGriddedExcel = function() {
-            if (!window.auth || !window.auth.currentUser) {
-                alert('请先登录');
-                openAuthModal();
-                return;
-            }
-            alert('下载 网格化清单.xlsx');
-        };
-
-       // ==================== 以下是原有的图表和数据函数（保持不变）====================
-// 通用工具函数
+// 通用函数：根据提供的数据数组更新年份下拉框
 function updateYearSelects(data, startSelectId, endSelectId) {
     const startSelect = document.getElementById(startSelectId);
     const endSelect = document.getElementById(endSelectId);
     if (!data || data.length === 0 || !startSelect || !endSelect) return;
 
+    // 1. 提取数据中的所有年份
     const years = data.map(d => parseInt(d.year)).filter(y => !isNaN(y));
     if (years.length === 0) return;
 
     const minYear = Math.min(...years);
     const maxYear = Math.max(...years);
+
+    // 2. 设定显示范围：起始为 min-1, 终止为 max+1 [cite: 307]
     const displayStart = minYear - 1;
     const displayEnd = maxYear + 1;
 
+    // 3. 清空并填充下拉框
     startSelect.innerHTML = '';
     endSelect.innerHTML = '';
     for (let y = displayStart; y <= displayEnd; y++) {
         startSelect.add(new Option(y, y));
         endSelect.add(new Option(y, y));
     }
+
+    // 4. 设置初始状态：起始年份选最小值，终止年份选最大值 [cite: 307]
     startSelect.value = displayStart;
     endSelect.value = displayEnd;
 }
 
-// 数据加载函数
-async function loadData() {
-    try {
-        console.log("Starting to load CSV data...");
-        const fetchCSV = async (url) => {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status} for ${url}`);
-            const csvText = await response.text();
-            return new Promise(resolve => {
-                Papa.parse(csvText, {
-                    header: true,
-                    dynamicTyping: true,
-                    skipEmptyLines: true,
-                    complete: (results) => resolve(results.data)
+    // 1. Data Loading
+    async function loadData() {
+        try {
+            console.log("Starting to load CSV data...");
+            const fetchCSV = async (url) => {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status} for ${url}`);
+                const csvText = await response.text();
+                return new Promise(resolve => {
+                    Papa.parse(csvText, {
+                        header: true,
+                        dynamicTyping: true,
+                        skipEmptyLines: true,
+                        complete: (results) => resolve(results.data)
+                    });
                 });
-            });
-        };
+            };
 
-        const [inv, invs, comp] = await Promise.all([
-            fetchCSV('inventory.csv'),
-            fetchCSV('inversion.csv'),
-            fetchCSV('comparison.csv')
-        ]);
+            // Ensure these filenames match exactly what you upload to GitHub
+            const [inv, invs, comp] = await Promise.all([
+                fetchCSV('inventory.csv'),
+                fetchCSV('inversion.csv'),
+                fetchCSV('comparison.csv')
+            ]);
 
-        inventoryData = inv;
-        inversionData = invs;
-        comparisonData = comp;
-        console.log("Data loaded successfully");
-        return true;
-    } catch (error) {
-        console.error("Failed to load data:", error);
-        return false;
+            inventoryData = inv;
+            inversionData = invs;
+            comparisonData = comp;
+            console.log("Data loaded successfully");
+            return true;
+
+        } catch (error) {
+            console.error("Failed to load data:", error);
+            document.body.insertAdjacentHTML('afterbegin', `<div class="bg-red-500 text-white p-4 text-center sticky top-0 z-[60]">Data loading failed: ${error.message}. Please check that inventory.csv, inversion.csv, and comparison.csv exist in the repository.</div>`);
+            return false;
+        }
     }
+
+	let chinaGeoJSONLoaded = false;
+
+	async function loadChinaGeoJSON() {
+	  if (chinaGeoJSONLoaded) return true;
+
+	  // 你需要把 china.json 放在同目录（或换成你的路径）
+	  const resp = await fetch('china.json');
+	  if (!resp.ok) throw new Error('Cannot fetch china.json');
+	  const geojson = await resp.json();
+
+	  echarts.registerMap('china', geojson);
+	  chinaGeoJSONLoaded = true;
+	  return true;
+	}
+
+	// 新的下载处理函数，检查用户是否已登录
+	function handleDownloadGriddedExcel() {
+		if (!isLoggedIn) {
+			// 用户未登录，弹出登录对话框
+			openAuthModal();
+		} else {
+			// 用户已登录，执行下载操作
+			const link = document.createElement('a');
+			link.href = '网格化清单.xlsx'; // 或者是实际的文件路径
+			link.download = '网格化清单.xlsx'; // 设置文件名
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		}
+	}
+
+   // 2. Initialization
+window.addEventListener("load", async () => {
+    // 初始化年份基础下拉框
+    initSelects();
+    initInversionSelect();
+    initComparisonSelect();
+    
+    // 加载 CSV 数据
+    const success = await loadData();
+    
+    if (success) {
+        // --- 1. 清单页面 (Inventory) 默认设置 ---
+        const subSel = document.getElementById('substance-select');
+        const regSel = document.getElementById('region-select');
+        // 索引 1 通常是第一个物质（索引 0 是 placeholder）
+        if (subSel.options.length > 0) subSel.selectedIndex = 0; 
+        if (regSel.options.length > 0) regSel.selectedIndex = 0; 
+        
+        handleMainFilterChange(); // 触发更新年份范围和来源下拉框 [cite: 71]
+        setActiveButton('btn-line'); // 设置“Total (Line)”按钮为激活状态 
+        updateInventoryChart("line"); // 执行画图 [cite: 82]
+
+        // --- 2. 反演页面 (Inversion) 默认设置 ---
+       const invSub = document.getElementById('inv-substance');
+       const invReg = document.getElementById('inv-country');
+
+// 步骤 1: 确保物质下拉框有数据并选中第一个有效物质（通常索引 1 是第一个物质）
+if (invSub.options.length > 0) {
+    invSub.selectedIndex = 0; 
+    
+    // 步骤 2: 必须先触发物质变化联动，以填充对应的“地区”选项
+    // 确保您有一个 handleInvSubstanceChange 函数来根据物质更新地区下拉框
+    handleInvSubstanceChange(); 
+
+    // 步骤 3: 地区联动后，自动选中出现的第一个地区
+    if (invReg.options.length > 0) {
+        invReg.selectedIndex = 0; // 选中新填充列表的第一个地区
+    }
+
+    // 步骤 4: 触发年份范围更新
+    handleInvFilterChange(); 
+
+    // 步骤 5: 最后执行画图
+    renderInversionChart(); 
 }
 
-// 导航函数
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
+        // --- 3. 对比页面 (Comparison) 默认初始化设置 ---
+const compSub = document.getElementById('comp-substance');
+const compReg = document.getElementById('comp-region');
 
-    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-    if(pageId === 'home') document.getElementById('nav-home')?.classList.add('active');
-    if(pageId === 'inventory') document.getElementById('nav-inventory')?.classList.add('active');
-    if(pageId === 'inversion') document.getElementById('nav-inversion')?.classList.add('active');
-    if(pageId === 'comparison') document.getElementById('nav-comparison')?.classList.add('active');
-    if(pageId === 'about') document.getElementById('nav-about')?.classList.add('active');
+if (compSub && compSub.options.length > 0) {
+    // 步骤 1: 选中第一个物质
+    compSub.selectedIndex = 0; 
+    
+    // 步骤 2: 触发物质联动（填充地区列表、选中首个地区、更新年份范围）
+    handleCompSubstanceChange(); 
 
-    window.scrollTo(0, 0);
+    // 步骤 3: 确保地区已被填充并选中第一个（在 handleCompSubstanceChange 已处理，这里做双重保险）
+    if (compReg.options.length > 0) {
+        compReg.selectedIndex = 0;
+    }
 
-    setTimeout(() => {
-        if(pageId === 'inventory') updateInventoryChart(currentInvChartType);
-        if(pageId === 'inversion') renderInversionChart();
-        if(pageId === 'comparison') renderComparisonChart();
-    }, 100);
+    // 步骤 4: 再次确认年份范围已更新
+    updateComparisonYearRange();
+
+    // 步骤 5: 初始自动执行画图
+    renderComparisonChart();
 }
+    }
+    
+    // 默认显示首页
+    showPage("home");
+});
 
-// Inventory 页面函数
-function initSelects() {
-    const s = document.getElementById('start-year');
-    const e = document.getElementById('end-year');
-    if(s && e) {
+    window.onresize = function() {
+        ['inventory-chart', 'inversion-chart', 'comparison-chart'].forEach(id => {
+            const chart = echarts.getInstanceByDom(document.getElementById(id));
+            if(chart) chart.resize();
+        });
+    };
+
+    // 3. Navigation
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        if(pageId === 'home') document.getElementById('nav-home')?.classList.add('active');
+        if(pageId === 'inventory') document.getElementById('nav-inventory')?.classList.add('active');
+        if(pageId === 'inversion') document.getElementById('nav-inversion')?.classList.add('active');
+        if(pageId === 'comparison') document.getElementById('nav-comparison')?.classList.add('active');
+        if(pageId === 'about') document.getElementById('nav-about')?.classList.add('active');
+
+        window.scrollTo(0, 0);
+
+        // Re-render charts when tab switches to ensure correct width
+// 修正后的 showPage 逻辑片段
+setTimeout(() => {
+            if(pageId === 'inventory') updateInventoryChart(currentInvChartType);
+            if(pageId === 'inversion') renderInversionChart();
+            if(pageId === 'comparison') renderComparisonChart();
+        }, 100);
+    }
+
+    // 4. Dropdown Initialization Helpers
+    function initSelects() {
+        const s = document.getElementById('start-year');
+        const e = document.getElementById('end-year');
+        fillYears(s, e);
+    }
+    function initInversionSelect() {
+        const s = document.getElementById('inv-start-year');
+        const e = document.getElementById('inv-end-year');
+        fillYears(s, e);
+    }
+    function initComparisonSelect() {
+        const s = document.getElementById('comp-start-year');
+        const e = document.getElementById('comp-end-year');
+        fillYears(s, e);
+    }
+    function fillYears(s, e) {
+        if(!s || !e) return;
         s.innerHTML = ''; e.innerHTML = '';
         yearsRange.forEach(y => {
             s.add(new Option(y, y));
             e.add(new Option(y, y));
         });
     }
-}
+
+    // 5. Chart Logic - Inventory
+// 1. 窗口大小自适应
+window.addEventListener('resize', function() {
+    const chartDom = document.getElementById('inventory-chart');
+    const chart = echarts.getInstanceByDom(chartDom);
+    if (chart) chart.resize();
+});
 
 function setActiveButton(activeId) {
+    // 1. 找到所有的图表按钮
     const buttons = document.querySelectorAll('.chart-btn');
+    
     buttons.forEach(btn => {
         if (btn.id === activeId) {
+            // 2. 激活态：深蓝色背景，白色文字
             btn.classList.remove('bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
             btn.classList.add('bg-blue-900', 'text-white', 'hover:bg-black');
         } else {
+            // 3. 非激活态：灰色背景，深灰色文字
             btn.classList.remove('bg-blue-900', 'text-white', 'hover:bg-black');
             btn.classList.add('bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
         }
     });
 }
 
+
+// 2. 主过滤器逻辑
 function handleMainFilterChange() {
     const substance = document.getElementById('substance-select').value;
     const region = document.getElementById('region-select').value;
+
     if (!substance || !region) return;
 
+    // 1. 仅更新年份和下拉框，不画图
     const filtered = inventoryData.filter(d => d.substance === substance && d.region === region);
-    updateYearSelects(filtered, 'start-year', 'end-year');
+    if (typeof updateYearSelects === 'function') {
+        updateYearSelects(filtered, 'start-year', 'end-year');
+    }
+
     syncReferenceDropdown(substance, region);
     updatePublicationTable(substance, region);
 }
 
+// 3. 同步研究来源下拉框
 function syncReferenceDropdown(substance, region) {
     const refSelect = document.getElementById('reference-select');
-    const filteredData = inventoryData.filter(d => d.substance === substance && d.region === region);
+    
+// 先过滤出当前物质和地区的所有基础数据
+    const filteredData = inventoryData.filter(d => 
+        d.substance === substance && d.region === region
+    );
+
+    // 找出那些拥有“非 total”行业数据的研究来源名称
     const sourcesWithSectors = [...new Set(filteredData
-        .filter(d => d.sector && d.sector.toLowerCase() !== "total")
+        .filter(d => d.sector.toLowerCase() !== "total") // 核心修改：只保留行业数据行
         .map(d => d.ref_short)
     )];
 
+    // 填充下拉框
     if (sourcesWithSectors.length > 0) {
-        refSelect.innerHTML = sourcesWithSectors.map(s => `<option value="${s}">${s}</option>`).join('');
+        refSelect.innerHTML = sourcesWithSectors.map(s => 
+            `<option value="${s}">${s}</option>`
+        ).join('');
     } else {
+        // 如果该物质下没有任何分行业数据，显示提示
         refSelect.innerHTML = '<option value="">Only Total Available</option>';
     }
 }
 
+// 4. 更新表格逻辑
 function updatePublicationTable(substance, region) {
     const tableBody = document.getElementById('publication-table-body');
     const filteredData = inventoryData.filter(d => d.substance === substance && d.region === region);
@@ -454,6 +842,7 @@ function updatePublicationTable(substance, region) {
         const years = studyData.map(d => d.year);
         const yearRange = `${Math.min(...years)}–${Math.max(...years)}`;
         const fullRef = studyData[0].ref_full || 'N/A';
+
         return `
             <tr class="hover:bg-gray-50 transition">
                 <td class="p-4 font-bold text-blue-900">${short}</td>
@@ -466,6 +855,7 @@ function updatePublicationTable(substance, region) {
     }).join('');
 }
 
+// 5. 核心图表逻辑
 function updateInventoryChart(type) {
     const substance = document.getElementById('substance-select').value;
     const region = document.getElementById('region-select').value;
@@ -474,9 +864,8 @@ function updateInventoryChart(type) {
     const selectedRefShort = document.getElementById('reference-select').value;
 
     const chartDom = document.getElementById('inventory-chart');
-    if (!chartDom) return;
-    
     let chart = echarts.getInstanceByDom(chartDom) || echarts.init(chartDom);
+    chart.resize(); // 强制调整大小
     chart.clear();
 
     const yearRange = Array.from({length: eYear - sYear + 1}, (_, i) => sYear + i);
@@ -484,32 +873,45 @@ function updateInventoryChart(type) {
         d.substance === substance && d.region === region && d.year >= sYear && d.year <= eYear
     );
 
-    let option = {
+   let option = {
         color: myExtendedColors,
         title: { left: "center", top: 0, textStyle: { fontSize: 16 } },
+        // ================== 核心修改部分：自定义 Tooltip ==================
         tooltip: { 
             trigger: "axis", 
             confine: true,
             formatter: function (params) {
+                // params 是当前横坐标下所有系列的数据点数组
                 let res = `<b>Year: ${params[0].name}</b><br/>`;
                 let hasData = false;
+
                 params.forEach(item => {
+                    // 只有当数据值不是 null、undefined 且不是 '-' 时才显示
                     if (item.value !== null && item.value !== undefined && item.value !== '-') {
                         res += `${item.marker} ${item.seriesName}: <b>${item.value}</b><br/>`;
                         hasData = true;
                     }
                 });
-                return hasData ? res : `<b>Year: ${params[0].name}</b><br/>No data`;
+
+                // 如果这一年所有研究都没有数据，返回空或提示
+                return hasData ? res : `<b>Year: ${params[0].name}</b><br/>`;
             }
         },
+        // ================================================================
         legend: { bottom: 0, padding: [5, 10] },
         xAxis: { 
-            type: "category", 
-            data: yearRange,
-            boundaryGap: type === "line" ? false : true, 
-            axisTick: { alignWithLabel: true },
-            axisLabel: { interval: 'auto', hideOverlap: true }
-        },
+    type: "category", 
+    data: yearRange,
+    // 1. 让刻度线和标签位于像素中心点（默认是 false，标签在两个刻度中间）
+    boundaryGap: type === "line" ? false : true, 
+    axisTick: {
+        alignWithLabel: true // 2. 确保刻度线与标签对齐
+    },
+    axisLabel: {
+        interval: 'auto', // 自动计算密度，防止重叠
+        hideOverlap: true  // 如果年份太密，自动隐藏重叠的标签
+    }
+},
         yAxis: { type: "value", name: "Gg yr⁻¹" },
         grid: { top: '60px', bottom: '60px', left: '50px', right: '20px', containLabel: true }
     };
@@ -523,18 +925,21 @@ function updateInventoryChart(type) {
             smooth: true,
             symbol: 'circle',
             symbolSize: 6,
-            connectNulls: false,
+            connectNulls: false, // 确保无数据时不连线
             data: yearRange.map(y => {
-                const row = baseFiltered.find(d => d.year === y && d.ref_short === short && d.sector && d.sector.toLowerCase() === "total");
+                const row = baseFiltered.find(d => d.year === y && d.ref_short === short && d.sector.toLowerCase() === "total");
+                // 确保没有数据时返回 null 而不是 0，这样 formatter 才能过滤掉
                 return row ? row.value : null; 
             })
         }));
     } else {
-        if (!selectedRefShort || selectedRefShort === "Only Total Available") {
-            chart.setOption({ title: { text: "No sector data available for this substance", left: "center" } });
+        // ... (Bar Chart 部分保持不变，因为它已经有了 selectedRefShort 过滤，通常不会有空行)
+        // 但为了统一，Bar Chart 也会应用上面定义的自定义 tooltip
+        if (!selectedRefShort) {
+            chart.setOption({ title: { text: "Please select a substance with valid sources", left: "center" } });
             return;
         }
-        const refData = baseFiltered.filter(d => d.ref_short === selectedRefShort && d.sector && d.sector.toLowerCase() !== "total");
+        const refData = baseFiltered.filter(d => d.ref_short === selectedRefShort && d.sector.toLowerCase() !== "total");
         const sectors = [...new Set(refData.map(d => d.sector))];
         option.title.text = `${substance} Sectors (${selectedRefShort}) - ${region}`;
         option.series = sectors.map(sec => ({
@@ -550,46 +955,72 @@ function updateInventoryChart(type) {
     chart.setOption(option);
 }
 
-// Inversion 页面函数
-function initInversionSelect() {
-    const s = document.getElementById('inv-start-year');
-    const e = document.getElementById('inv-end-year');
-    if(s && e) {
-        s.innerHTML = ''; e.innerHTML = '';
-        yearsRange.forEach(y => {
-            s.add(new Option(y, y));
-            e.add(new Option(y, y));
-        });
+// ==========================================
+// 修复部分：页面初始化逻辑 (Fix)
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. 初始化年份下拉框 (保持不变)
+    const startYearSelect = document.getElementById('start-year');
+    const endYearSelect = document.getElementById('end-year');
+    
+    let yearOptions = '';
+    for(let y = 1980; y <= 2024; y++) {
+        yearOptions += `<option value="${y}">${y}</option>`;
     }
-}
+    startYearSelect.innerHTML = yearOptions;
+    endYearSelect.innerHTML = yearOptions;
+    
+    startYearSelect.value = "1980";
+    endYearSelect.value = "2024";
 
+    // 2. 将物质和地区重置为初始状态 (即选中那个 "请选择" 选项)
+    document.getElementById('substance-select').selectedIndex = 0;
+    document.getElementById('region-select').selectedIndex = 0;
+    
+    // 3. 初始化下拉框和表格（此时由于没选物质，会显示 "No Sources"）
+    handleMainFilterChange();
+
+    // 4. 注意：这里不再调用 updateInventoryChart('line')
+    // 只有当用户选择了具体数值后，通过 handleMainFilterChange 触发更新
+});
+
+    // 6. Chart Logic - Inversion
+// 处理物质变化：仅联动更新地区和年份，不画图
 function handleInvSubstanceChange() {
     const subVal = document.getElementById('inv-substance').value;
     const regSel = document.getElementById('inv-country');
+    
     if (!subVal || !inversionData.length) return;
 
+    // 1. 动态筛选该物质对应的区域
     const availableRegions = [...new Set(
         inversionData
             .filter(d => (d.substance === subVal || d.Substance === subVal))
             .map(d => d.region || d.Region || d.country)
     )].filter(r => r).sort();
 
+    // 2. 更新地区下拉框
     regSel.innerHTML = ''; 
     availableRegions.forEach(reg => {
         regSel.add(new Option(reg, reg));
     });
-    if (availableRegions.length > 0) regSel.selectedIndex = 0;
+    regSel.selectedIndex = 0;
+
+    // 3. 联动更新年份范围（基于新选中的第一个地区）
     handleInvFilterChange();
 }
 
+// 处理地区/其他过滤变化：仅更新年份，不画图
 function handleInvFilterChange() {
     const sub = document.getElementById('inv-substance').value;
     const reg = document.getElementById('inv-country').value;
+    
     if (sub && reg) {
         const filtered = inversionData.filter(d => 
             (d.substance === sub || d.Substance === sub) && 
             (d.region === reg || d.Region === reg || d.country === reg)
         );
+        // 自动更新年份选择器，方便用户查看可选范围
         updateYearSelects(filtered, 'inv-start-year', 'inv-end-year');
     }
 }
@@ -598,23 +1029,33 @@ function renderInversionChart() {
     const chartDom = document.getElementById("inversion-chart");
     if (!chartDom) return;
 
+    // 1. 获取当前筛选值
     const substance = document.getElementById("inv-substance").value;
     const region = document.getElementById("inv-country").value;
     const sYear = parseInt(document.getElementById("inv-start-year").value);
     const eYear = parseInt(document.getElementById("inv-end-year").value);
 
+    // 校验年份逻辑
     if (sYear > eYear) {
         alert("Start year cannot be greater than end year");
         return;
     }
 
+    // 初始化/获取图表实例
     let chart = echarts.getInstanceByDom(chartDom);
-    if (chart) chart.dispose();
+    if (chart) {
+        chart.dispose();
+    }
     chart = echarts.init(chartDom);
 
+    // 2. 构造完整的横坐标年份数组
+    // 确保这是一个连续的整数数组，使数据点落在刻度线上
     const yearRange = [];
-    for (let y = sYear; y <= eYear; y++) yearRange.push(y);
+    for (let y = sYear; y <= eYear; y++) {
+        yearRange.push(y);
+    }
 
+    // 3. 过滤数据
     const filtered = inversionData.filter(d =>
         d.substance === substance &&
         d.region === region &&
@@ -622,8 +1063,10 @@ function renderInversionChart() {
         d.year <= eYear
     );
 
-    updateInversionReferenceTable(filtered);
+// ============= 新增：更新参考文献表格 =============
+    updateReferenceTable(filtered);
 
+    // 4. 检查是否有数据（无数据时显示提示）
     if (filtered.length === 0) {
         chart.setOption({
             title: { text: `${substance} Inversion Emissions (${region})`, left: "center" },
@@ -642,31 +1085,39 @@ function renderInversionChart() {
 
     const studies = [...new Set(filtered.map(d => d.study))];
     let series = [];
-    let allValues = [0];
+    let allValues = [0]; 
 
+    // 5. 构造 Series
     studies.forEach(study => {
         const rows = filtered.filter(d => d.study === study);
         const lineData = [];
         const errorData = [];
 
+        // 遍历 yearRange 确保每个年份索引对应正确
         yearRange.forEach((y, idx) => {
             const r = rows.find(d => d.year === y);
+            
+            // 如果该年份没有该研究的数据，存入 null 以保持坐标对齐且不连线
             if (!r) {
-                lineData.push(null);
+                lineData.push(null); 
                 return;
             }
+
             const val = r.mean ?? r.Mean;
-            const sd = r.sd ?? r.SD ?? 0;
+            const sd  = r.sd ?? r.SD ?? 0;
 
             if (val !== undefined && val !== null) {
+                // 存入对象以便 formatter 调用
                 lineData.push({
                     value: val,
-                    sdValue: sd
+                    sdValue: sd 
                 });
                 allValues.push(val);
+
                 if (sd > 0) {
                     const low = val - sd;
                     const high = val + sd;
+                    // 存储索引 idx 以确保误差棒精准对齐刻度
                     errorData.push([idx, low, high]);
                     allValues.push(high);
                 }
@@ -675,17 +1126,19 @@ function renderInversionChart() {
             }
         });
 
+        // 折线系列配置
         series.push({
             name: study,
             type: "line",
             data: lineData,
-            smooth: false,
+            smooth: false,      // 需求1：直线连接
             symbol: "circle",
             symbolSize: 8,
             z: 20,
-            connectNulls: false
+            connectNulls: false // 需求2：无数据不显示且断开连接
         });
 
+        // 误差棒系列配置
         if (errorData.length > 0) {
             series.push({
                 type: "custom",
@@ -694,7 +1147,7 @@ function renderInversionChart() {
                     const xIndex = api.value(0);
                     const low = api.coord([xIndex, api.value(1)]);
                     const high = api.coord([xIndex, api.value(2)]);
-                    const half = 5;
+                    const half = 5; // 误差棒横线宽度
                     const style = api.style({
                         stroke: api.visual('color'),
                         lineWidth: 1.5
@@ -715,22 +1168,43 @@ function renderInversionChart() {
         }
     });
 
-    const rawMax = Math.max(...allValues);
-    let smartMax, smartInterval;
-    if (rawMax <= 0 || !isFinite(rawMax)) {
-        smartMax = 1;
-        smartInterval = 0.2;
-    } else {
-        const targetMax = rawMax * 1.15;
-        const magnitude = Math.pow(10, Math.floor(Math.log10(targetMax)));
-        const candidateSteps = [0.1, 0.2, 0.25, 0.3, 0.5, 1, 2, 2.5, 3, 5, 10].map(s => s * magnitude / 1);
-        smartInterval = candidateSteps.find(s => s >= targetMax / 5) || candidateSteps[candidateSteps.length - 1];
-        smartMax = smartInterval * 5;
-    }
+    // 计算 Y 轴动态范围
+    //const rawMax = Math.max(...allValues);
+    //const interval = Math.ceil((rawMax || 10) / 5 / 2) * 2; 
+    //const yMax = interval * 5;
+// 1. 拿到包含标准差的最大值
+const rawMax = Math.max(...allValues);
 
+// 2. 计算理想的最大值和等分间距
+let smartMax, smartInterval;
+
+if (rawMax <= 0 || !isFinite(rawMax)) {
+    smartMax = 1;
+    smartInterval = 0.2;
+} else {
+    // 稍微给 15% 的余量
+    const targetMax = rawMax * 1.15;
+    
+    // 寻找一个整齐的步长 (Step)
+    // 根据数量级找到合适的刻度值 (如 0.1, 0.2, 0.5, 1, 2, 5, 10...)
+    const magnitude = Math.pow(10, Math.floor(Math.log10(targetMax)));
+    const candidateSteps = [0.1, 0.2, 0.25, 0.3, 0.5, 1, 2, 2.5, 3, 5, 10].map(s => s * magnitude / 1);
+    
+    // 找到第一个能覆盖 targetMax / 5 的整齐刻度
+    const idealStep = candidateSteps.find(s => s >= targetMax / 5) || candidateSteps[candidateSteps.length - 1];
+    
+    smartInterval = idealStep;
+    smartMax = idealStep * 5; // 强制 5 等分
+}
+
+    // 6. 设置图表最终 Option
     chart.setOption({
         color: myExtendedColors,
-        title: { text: `${substance} Inversion Emissions (${region})`, left: "center", top: 10 },
+         title: { 
+            text: `${substance} Inversion Emissions (${region})`, 
+            left: "center",
+            top: 10 
+        },
         tooltip: { 
             trigger: "axis",
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -740,12 +1214,12 @@ function renderInversionChart() {
                 params.forEach(p => {
                     if (p.seriesType === 'line' && p.value !== null && p.value !== undefined) {
                         const val = typeof p.value === 'object' ? p.value.value : p.value;
-                        const sd = p.data && p.data.sdValue !== undefined ? p.data.sdValue : 0;
+                        const sd = p.data.sdValue !== undefined ? p.data.sdValue : 0;
                         res += `${p.marker} ${p.seriesName}: <b>${val}</b> (±${sd})<br/>`;
                         hasValidData = true;
                     }
                 });
-                return hasValidData ? res : null;
+                return hasValidData ? res : null; // 如果整行无数据则不显示 Tooltip
             }
         },
         legend: { bottom: 5, data: studies },
@@ -753,37 +1227,64 @@ function renderInversionChart() {
         xAxis: {
             type: "category",
             data: yearRange,
-            boundaryGap: true,
-            axisTick: { alignWithLabel: true },
-            axisLabel: { interval: 0, rotate: yearRange.length > 12 ? 45 : 0 }
+            // 关键修改：boundaryGap 设为 true 让点落在刻度中间，
+            // 配合 axisTick 的 alignWithLabel 确保刻度线对准年份。
+            boundaryGap: true, 
+            axisTick: {
+                alignWithLabel: true 
+            },
+            axisLabel: {
+                interval: 0,
+                rotate: yearRange.length > 12 ? 45 : 0 // 年份过多自动旋转
+            }
         },
-        yAxis: {
-            type: "value",
-            name: "Gg yr⁻¹",
-            min: 0,
-            max: smartMax,
-            interval: smartInterval,
-            splitLine: { lineStyle: { type: 'dashed' } },
-            axisTick: { show: true },
-            axisLine: { show: true },
-            axisLabel: { formatter: function(value) { return Number.isInteger(value) ? value.toString() : value.toFixed(1); } }
-        },
+       yAxis: {
+    type: "value",
+    name: "Gg yr⁻¹",
+    min: 0,
+    max: smartMax, 
+    interval: smartInterval, // 关键修改：强制每一个刻度的间距完全一致
+    splitLine: { 
+        lineStyle: { type: 'dashed' } 
+    },
+    axisTick: { show: true },
+    axisLine: { show: true },
+    axisLabel: {
+    formatter: function(value) {
+        // 如果数值本身就是整数，直接返回整数形式
+        if (Number.isInteger(value)) {
+            return value.toString();
+        }
+        // 否则根据间距动态决定小数位数
+        return smartInterval < 0.1 ? value.toFixed(2) : value.toFixed(1);
+    }
+}
+},
         series: series
     });
 }
 
-function updateInversionReferenceTable(data) {
+function updateReferenceTable(data) {
     const tableBody = document.getElementById("inversion-ref-table");
+    const noDataMsg = document.getElementById("no-ref-msg");
+    
     if (!tableBody) return;
+
+    // 1. 清空现有内容
     tableBody.innerHTML = "";
+
     if (!data || data.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No references available.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No references available.</td></tr>`;
         return;
     }
 
+    // 2. 按照 研究(study) + 物质(substance) + 区域(region) 进行分组
     const groups = {};
+
     data.forEach(item => {
+        // 创建分组唯一键
         const groupKey = `${item.study}|${item.substance}|${item.region}`;
+        
         if (!groups[groupKey]) {
             groups[groupKey] = {
                 study: item.study,
@@ -796,60 +1297,60 @@ function updateInversionReferenceTable(data) {
         groups[groupKey].years.push(parseInt(item.year));
     });
 
+    // 3. 将分组转换为数组并处理年份范围
     const summaryData = Object.values(groups).map(group => {
         const minYear = Math.min(...group.years);
         const maxYear = Math.max(...group.years);
+        
         return {
             ...group,
             yearRange: minYear === maxYear ? `${minYear}` : `${minYear}–${maxYear}`
         };
     });
 
+    // 4. 排序：按研究名称字母顺序排列
     summaryData.sort((a, b) => a.study.localeCompare(b.study));
+
+    // 5. 渲染表格行
     summaryData.forEach(row => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-blue-50 transition-colors border-b border-gray-100";
+        
         tr.innerHTML = `
             <td class="px-4 py-3 font-semibold text-blue-900">${row.study}</td>
             <td class="px-4 py-3 text-gray-700">${row.substance}</td>
             <td class="px-4 py-3 text-gray-700">${row.region}</td>
             <td class="px-4 py-3 text-gray-500 font-medium">${row.yearRange}</td>
-            <td class="p-4 italic text-gray-600">${row.citation}</td>
+            <td class="p4 italic text-gray-600">${row.citation}</td>
         `;
         tableBody.appendChild(tr);
     });
 }
 
-// Comparison 页面函数
-function initComparisonSelect() {
-    const s = document.getElementById('comp-start-year');
-    const e = document.getElementById('comp-end-year');
-    if(s && e) {
-        s.innerHTML = ''; e.innerHTML = '';
-        yearsRange.forEach(y => {
-            s.add(new Option(y, y));
-            e.add(new Option(y, y));
-        });
-    }
-}
-
+// 7. Chart Logic - Comparison (支持非对称误差棒)
 function handleCompSubstanceChange() {
     const selectedSubstance = document.getElementById('comp-substance').value;
     const regionSelect = document.getElementById('comp-region');
+    
+    // 注意：这里纠正了你原代码中的变量名错误 (subVal 改为 selectedSubstance)
     if (!selectedSubstance || !comparisonData) return;
 
+    // 1. 从 comparisonData 中过滤出该物质对应的所有唯一地区
     const availableRegions = [...new Set(comparisonData
         .filter(d => d.substance === selectedSubstance)
         .map(d => d.region)
-    )].filter(r => r);
+    )].filter(r => r); // 过滤掉空值
 
+    // 排序逻辑：Global优先，其他字母序
     availableRegions.sort((a, b) => {
         if (a === 'Global') return -1;
         if (b === 'Global') return 1;
         return a.localeCompare(b);
     });
 
-    let optionsHtml = '';
+    // 2. 更新地区下拉框的内容
+    let optionsHtml = ''; // 移除 "-- Select Region --"
+    
     if (availableRegions.length > 0) {
         availableRegions.forEach(reg => {
             optionsHtml += `<option value="${reg}">${reg}</option>`;
@@ -857,10 +1358,13 @@ function handleCompSubstanceChange() {
     } else {
         optionsHtml = '<option value="">No regions available</option>';
     }
+    
     regionSelect.innerHTML = optionsHtml;
 
+    // 3. 【关键修改】默认选中第一个地区，并立即触发年份联动
     if (availableRegions.length > 0) {
-        regionSelect.selectedIndex = 0;
+        regionSelect.selectedIndex = 0; 
+        // 只有在初始加载或需要联动更新年份时才调用
         updateComparisonYearRange();
     }
 }
@@ -870,13 +1374,15 @@ function updateComparisonYearRange() {
     const reg = document.getElementById("comp-region").value;
     const methodFilter = document.getElementById("comp-method-filter").value;
 
-    if (!sub) return;
+    if (!sub) return; // 至少需要选择物质
 
+    // 1. 过滤数据
     let filtered = comparisonData.filter(d => 
         (d.substance === sub || d.Substance === sub) &&
-        (!reg || d.region === reg || d.Region === reg)
+        (!reg || d.region === reg || d.Region === reg) // 如果还没选地区，则看该物质全量
     );
 
+    // 2. 如果选了方法，进一步过滤
     if (methodFilter !== 'All') {
         filtered = filtered.filter(d => {
             const m = (d.method || d.Method || "").toLowerCase();
@@ -886,18 +1392,25 @@ function updateComparisonYearRange() {
         });
     }
 
+    // 3. 调用通用的 updateYearSelects 函数 (假设你已经按照之前的建议定义了它)
+    // 如果没有统一定义，请使用下方的代码：
     const years = filtered.map(d => parseInt(d.year || d.Year)).filter(y => !isNaN(y));
     if (years.length > 0) {
         const minYear = Math.min(...years);
         const maxYear = Math.max(...years);
+        
         const startSelect = document.getElementById('comp-start-year');
         const endSelect = document.getElementById('comp-end-year');
+        
+        // 清空并重新填充
         startSelect.innerHTML = '';
         endSelect.innerHTML = '';
         for (let y = (minYear - 1); y <= (maxYear + 1); y++) {
             startSelect.add(new Option(y, y));
             endSelect.add(new Option(y, y));
         }
+        
+        // 初始状态：1978 和 2024 (最小值-1 和 最大值+1)
         startSelect.value = minYear - 1;
         endSelect.value = maxYear + 1;
     }
@@ -907,6 +1420,7 @@ function renderComparisonChart() {
     const chartDom = document.getElementById("comparison-chart");
     if (!chartDom) return;
 
+    // 1. 获取筛选器值
     const substance = document.getElementById("comp-substance").value;
     const region = document.getElementById("comp-region").value;
     const sYear = parseInt(document.getElementById("comp-start-year").value);
@@ -918,9 +1432,13 @@ function renderComparisonChart() {
         return;
     }
 
+    // 2. 构造年份范围
     const yearRange = [];
-    for (let y = sYear; y <= eYear; y++) yearRange.push(y);
+    for (let y = sYear; y <= eYear; y++) {
+        yearRange.push(y);
+    }
 
+    // 3. 数据过滤（第一步：基础过滤）
     let filtered = comparisonData.filter(d =>
         (d.substance === substance || d.Substance === substance) &&
         (d.region === region || d.Region === region) &&
@@ -928,6 +1446,7 @@ function renderComparisonChart() {
         (parseInt(d.year || d.Year) <= eYear)
     );
 
+    // 4. 数据过滤（第二步：方法分类过滤）
     if (methodFilter !== 'All') {
         filtered = filtered.filter(d => {
             const m = (d.method || d.Method || "").toLowerCase();
@@ -937,10 +1456,14 @@ function renderComparisonChart() {
         });
     }
 
+    // ============= 核心修正：调用统一的表格更新函数 =============
+    // 不再在 renderComparisonChart 内部手动拼凑 tableHTML，避免覆盖冲突
     updateComparisonReferenceTable(filtered);
+    // =========================================================
 
+    // 5. 初始化图表
     let chart = echarts.getInstanceByDom(chartDom);
-    if (chart) chart.dispose();
+    if (chart) { chart.dispose(); }
     chart = echarts.init(chartDom);
 
     if (filtered.length === 0) {
@@ -954,9 +1477,12 @@ function renderComparisonChart() {
         return;
     }
 
+// 6. 构造 Series（用于 ECharts）
     const datasets = [...new Set(filtered.map(d => d.dataset || d.study || d.Name))];
     let series = [];
     let allValuesForScale = [0];
+    
+    // --- 新增：初始化分类图例数组 ---
     const buLegends = [];
     const tdLegends = [];
 
@@ -966,15 +1492,18 @@ function renderComparisonChart() {
         const errorData = [];
         const method = (rows[0]?.method || rows[0]?.Method || "Unknown").toLowerCase();
 
+        // --- 新增：根据 method 归类图例 ---
         if (method.includes('bottom-up')) {
             buLegends.push(name);
         } else if (method.includes('inverse') || method.includes('isc')) {
             tdLegends.push(name);
         } else {
-            tdLegends.push(name);
+            // 如果都不匹配，可以默认放进一个组，或者加个 Other
+            tdLegends.push(name); 
         }
 
         yearRange.forEach((y, idx) => {
+            // ... (保持你原有的 lineData 和 errorData 处理逻辑不变) ...
             const r = rows.find(d => parseInt(d.year || d.Year) === y);
             if (!r) {
                 lineData.push(null);
@@ -1013,6 +1542,7 @@ function renderComparisonChart() {
                 type: "custom",
                 name: name,
                 renderItem: function (params, api) {
+                    // ... (保持你原有的 error bar 绘制逻辑不变) ...
                     const xIndex = api.value(0);
                     const low = api.coord([xIndex, api.value(1)]);
                     const high = api.coord([xIndex, api.value(2)]);
@@ -1034,151 +1564,223 @@ function renderComparisonChart() {
         }
     });
 
-    const rawMax = Math.max(...allValuesForScale);
-    const rawMin = Math.min(...allValuesForScale);
-    let smartMax, smartMin, smartInterval;
+// 7. Y轴范围计算
+const rawMax = Math.max(...allValuesForScale);
+const rawMin = Math.min(...allValuesForScale); // 获取包含误差棒底端的绝对最小值
 
-    if (!isFinite(rawMax) || allValuesForScale.length <= 1) {
-        smartMax = 1;
+let smartMax, smartMin, smartInterval;
+
+if (!isFinite(rawMax) || allValuesForScale.length <= 1) {
+    smartMax = 1;
+    smartMin = 0;
+    smartInterval = 0.2;
+} else {
+    // --- 最小值逻辑 ---
+    // 如果最小值小于 0，则设为最小值减去 10% 的余量；否则固定为 0
+    smartMin = rawMin < 0 ? rawMin * 1.1 : 0;
+
+    // --- 最大值逻辑 ---
+    // 稍微给 15% 的余量
+    const targetMax = rawMax * 1.15;
+    const range = targetMax - smartMin;
+
+    // 根据数据范围找到合适的刻度步长
+    const magnitude = Math.pow(10, Math.floor(Math.log10(range)));
+    const candidateSteps = [0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.8, 1, 1.2, 1.5, 1.6, 2, 3, 2.5, 5, 10].map(s => s * magnitude);
+    
+    // 找到能将范围大致分为 5 段的整齐刻度
+    smartInterval = candidateSteps.find(s => s >= range / 5) || candidateSteps[candidateSteps.length - 1];
+    
+    // 重新对齐 smartMin 和 smartMax 到刻度上
+    smartMin = Math.floor(smartMin / smartInterval) * smartInterval;
+    smartMax = smartMin + smartInterval * 6; // 确保包含 targetMax
+    
+    // 再次检查：如果原本数据都大于0，且对齐后 smartMin 变成了负数（比如-0.1），强制回 0
+    if (rawMin >= 0 && smartMin < 0) {
         smartMin = 0;
-        smartInterval = 0.2;
-    } else {
-        smartMin = rawMin < 0 ? rawMin * 1.1 : 0;
-        const targetMax = rawMax * 1.15;
-        const range = targetMax - smartMin;
-        const magnitude = Math.pow(10, Math.floor(Math.log10(range)));
-        const candidateSteps = [0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.8, 1, 1.2, 1.5, 1.6, 2, 3, 2.5, 5, 10].map(s => s * magnitude);
-        smartInterval = candidateSteps.find(s => s >= range / 5) || candidateSteps[candidateSteps.length - 1];
-        smartMin = Math.floor(smartMin / smartInterval) * smartInterval;
-        smartMax = smartMin + smartInterval * 6;
-        if (rawMin >= 0 && smartMin < 0) smartMin = 0;
     }
+}
 
-    const containerWidth = chartDom.clientWidth || 1000;
-    const itemsPerRow = Math.floor(containerWidth / 150);
-    const buRows = Math.ceil(buLegends.length / itemsPerRow);
-    const tdRows = Math.ceil(tdLegends.length / itemsPerRow);
-    const rowHeight = 4.5;
-    let gridBottomPercent = 25;
-    const titleArray = [{ text: `${substance} Emission Comparison (${region})`, left: "center", top: 10 }];
-    const legendArray = [];
+    // 8. 设置图表配置
+// --- 1. 动态布局参数准备 ---
+const leftPos = '10%'; 
+const titleArray = [{ text: `${substance} Emission Comparison (${region})`, left: "center", top: 10 }];
+const legendArray = [];
 
-    if (tdLegends.length > 0 && buLegends.length > 0) {
-        const tdLegendBottom = 2;
-        const tdTitleBottom = tdLegendBottom + (tdRows * rowHeight);
-        legendArray.push({
-            data: tdLegends,
-            bottom: tdLegendBottom + '%',
-            left: '10%',
-            width: '85%',
-            itemGap: 15
-        });
-        titleArray.push({
-            text: 'Top-down:',
-            left: '10%',
-            bottom: tdTitleBottom + '%',
-            textStyle: { fontSize: 13, color: '#1e3a8a', fontWeight: 'bold' }
-        });
+// --- 2. 动态计算行数并优化布局 ---
+const containerWidth = chartDom.clientWidth || 1000; // 获取容器宽度
+const charWidth = 10; // 预估每个字符宽度
+const itemPadding = 60; // 图例图标+间距的固定宽度
+const itemsPerRow = Math.floor(containerWidth / 150); // 粗略预估一行放几个，150px为一个图例单元
 
-        const buLegendBottom = tdTitleBottom + 4;
-        const buTitleBottom = buLegendBottom + (buRows * rowHeight);
-        legendArray.push({
-            data: buLegends,
-            bottom: buLegendBottom + '%',
-            left: '10%',
-            width: '85%',
-            itemGap: 15
-        });
-        titleArray.push({
-            text: 'Bottom-up:',
-            left: '10%',
-            bottom: buTitleBottom + '%',
-            textStyle: { fontSize: 13, color: '#1e3a8a', fontWeight: 'bold' }
-        });
-        gridBottomPercent = buTitleBottom + 8;
-    } else {
-        gridBottomPercent = 20;
-        const activeLegends = buLegends.length > 0 ? buLegends : tdLegends;
-        const activeLabel = buLegends.length > 0 ? 'Bottom-up:' : 'Top-down:';
-        legendArray.push({
-            data: activeLegends,
-            bottom: '2%',
-            left: '10%',
-            width: '85%'
-        });
-        titleArray.push({
-            text: activeLabel,
-            left: '10%',
-            bottom: '10%',
-            textStyle: { fontSize: 13, color: '#1e3a8a', fontWeight: 'bold' }
-        });
-    }
+// 计算 BU 占了几行
+const buRows = Math.ceil(buLegends.length / itemsPerRow);
+// 计算 TD 占了几行
+const tdRows = Math.ceil(tdLegends.length / itemsPerRow);
 
-    chart.setOption({
-        color: myExtendedColors,
-        title: titleArray,
-        legend: legendArray,
-        grid: { left: '5%', right: '5%', top: 80, bottom: gridBottomPercent + '%', containLabel: true },
-        tooltip: {
-            trigger: "axis",
-            formatter: function(params) {
-                let res = `<b>Year: ${params[0].name}</b><br/>`;
-                let hasValid = false;
-                params.forEach(p => {
-                    if (p.seriesType === 'line' && p.data && p.data.value !== null) {
-                        const d = p.data;
-                        const errInfo = (d.errPos || d.errNeg) 
-                            ? `<span style="font-size:0.9em; color:#666;"> (+${d.errPos}/-${d.errNeg})</span>` 
-                            : "";
-                        res += `${p.marker} ${p.seriesName}: <b>${d.value}</b>${errInfo}<br/>`;
-                        hasValid = true;
-                    }
-                });
-                return hasValid ? res : null;
-            }
-        },
-        xAxis: {
-            type: "category",
-            data: yearRange,
-            boundaryGap: true,
-            axisTick: { alignWithLabel: true },
-            axisLabel: { interval: 'auto', rotate: yearRange.length > 10 ? 45 : 0, hideOverlap: true, margin: 12 },
-            axisLine: { onZero: false }
-        },
-        yAxis: {
-            type: "value",
-            name: "Gg yr⁻¹",
-            min: smartMin,
-            max: smartMax,
-            interval: smartInterval,
-            splitLine: { lineStyle: { type: 'dashed' } },
-            axisTick: { show: true },
-            axisLine: { show: true },
-            axisLabel: { formatter: function(value) { return Number.isInteger(value) ? value.toString() : value.toFixed(1); } }
-        },
-        series: series
+// 动态高度单位 (每行大约占 4%-5%)
+const rowHeight = 4.5; 
+const titleGap = 6; // 标题与图例之间的间距
+
+let gridBottomPercent = 25;
+
+if (tdLegends.length > 0 && buLegends.length > 0) {
+    // 1. Top-down 居于最底部
+    const tdLegendBottom = 2; 
+    const tdTitleBottom = tdLegendBottom + (tdRows * rowHeight);
+
+    legendArray.push({
+        data: tdLegends,
+        bottom: tdLegendBottom + '%',
+        left: leftPos,
+        width: '85%',
+        itemGap: 15
+    });
+    titleArray.push({
+        text: 'Top-down:',
+        left: leftPos,
+        bottom: tdTitleBottom + '%',
+        textStyle: { fontSize: 13, color: '#1e3a8a', fontWeight: 'bold' }
+    });
+
+    // 2. Bottom-up 根据 TD 的高度动态向上漂移
+    // 这里的 4% 是 TD标题 与 BU图例 之间的额外空隙，你可以根据需要调小
+    const buLegendBottom = tdTitleBottom + 4; 
+    const buTitleBottom = buLegendBottom + (buRows * rowHeight);
+
+    legendArray.push({
+        data: buLegends,
+        bottom: buLegendBottom + '%',
+        left: leftPos,
+        width: '85%',
+        itemGap: 15
+    });
+    titleArray.push({
+        text: 'Bottom-up:',
+        left: leftPos,
+        bottom: buTitleBottom + '%',
+        textStyle: { fontSize: 13, color: '#1e3a8a', fontWeight: 'bold' }
+    });
+
+    // 3. 动态调整网格底部，确保不压到最上方的 BU 标题
+    gridBottomPercent = buTitleBottom + 8;
+} else {
+    // 只有一组数据时的逻辑保持紧凑
+    gridBottomPercent = 20;
+    const activeLegends = buLegends.length > 0 ? buLegends : tdLegends;
+    const activeLabel = buLegends.length > 0 ? 'Bottom-up:' : 'Top-down:';
+    
+    legendArray.push({
+        data: activeLegends,
+        bottom: '2%',
+        left: leftPos,
+        width: '85%'
+    });
+    titleArray.push({
+        text: activeLabel,
+        left: leftPos,
+        bottom: '10%', // 只有一行时调低标题位置
+        textStyle: { fontSize: 13, color: '#1e3a8a', fontWeight: 'bold' }
     });
 }
 
+// --- 3. 设置图表配置 ---
+chart.setOption({
+    color: myExtendedColors,
+    title: titleArray,
+    legend: legendArray,
+    // 动态调整 grid.bottom，防止图表压到图例
+    grid: { 
+        left: '5%', 
+        right: '5%', 
+        top: 80,
+        bottom: gridBottomPercent + '%', 
+        containLabel: true 
+    },
+    tooltip: {
+        trigger: "axis",
+        formatter: function(params) {
+            let res = `<b>Year: ${params[0].name}</b><br/>`;
+            let hasValid = false;
+            params.forEach(p => {
+                if (p.seriesType === 'line' && p.data && p.data.value !== null) {
+                    const d = p.data;
+                    const errInfo = (d.errPos || d.errNeg) 
+                        ? `<span style="font-size:0.9em; color:#666;"> (+${d.errPos}/-${d.errNeg})</span>` 
+                        : "";
+                    res += `${p.marker} ${p.seriesName}: <b>${d.value}</b>${errInfo}<br/>`;
+                    hasValid = true;
+                }
+            });
+            return hasValid ? res : null;
+        }
+    },
+    xAxis: {
+    type: "category",
+    data: yearRange,
+    // --- 核心修改：对齐逻辑 ---
+    boundaryGap: true, // 1. 让折线图的点直接落在刻度线上，而不是两个刻度中间
+    axisTick: {
+        alignWithLabel: true // 2. 确保刻度线与文字标签中心对齐
+    },
+    axisLabel: {
+        interval: 'auto', // 自动计算密度，防止年份太多挤在一起
+        rotate: yearRange.length > 10 ? 45 : 0, // 年份多时旋转
+        hideOverlap: true, // 自动隐藏重叠的标签
+        margin: 12 // 文字与轴线的间距
+    },
+    axisLine: {
+        onZero: false // 确保轴线在最底部
+    }
+},
+    yAxis: {
+        type: "value",
+        name: "Gg yr⁻¹",
+        min: smartMin,
+        max: smartMax, 
+        interval: smartInterval,
+        splitLine: { lineStyle: { type: 'dashed' } },
+        axisTick: { show: true },
+        axisLine: { show: true },
+        axisLabel: {
+            formatter: function(value) {
+                return Number.isInteger(value) ? value.toString() : value.toFixed(1);
+            }
+        }
+    },
+    series: series
+});
+}
+
+/**
+ * 辅助函数：更新页面下方的参考文献表格
+ * 修复了字段错位、Year不显示、Reference不显示的问题
+ */
 function updateComparisonReferenceTable(data) {
     const tableBody = document.getElementById("comp-table-body");
     if (!tableBody) return;
+
     tableBody.innerHTML = "";
+
     if (!data || data.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No references available.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No references available.</td></tr>`;
         return;
     }
 
     const groups = {};
+
     data.forEach(item => {
+        // 兼容性字段提取：解决大小写不一致导致的读取失败
         const name = item.dataset || item.study || item.Name || "Unknown";
         const substance = item.substance || item.Substance || item.gas || "N/A";
         const region = item.region || item.Region || "Global";
-        const method = item.method || item.Method || "N/A";
+        const method = item.method;
         const citation = item.citation || item.Citation || item.reference || "Reference not provided";
         const rawYear = item.year || item.Year;
-        const groupKey = `${name}|${substance}|${region}`;
 
+        // 以 Study+物质+区域 作为分组基准，合并不同年份
+        const groupKey = `${name}|${substance}|${region}`;
+        
         if (!groups[groupKey]) {
             groups[groupKey] = {
                 name: name,
@@ -1189,6 +1791,7 @@ function updateComparisonReferenceTable(data) {
                 citation: citation
             };
         }
+
         if (rawYear) {
             const parsedYear = parseInt(rawYear);
             if (!isNaN(parsedYear)) groups[groupKey].years.push(parsedYear);
@@ -1206,9 +1809,12 @@ function updateComparisonReferenceTable(data) {
     });
 
     summaryData.sort((a, b) => a.name.localeCompare(b.name));
+
+    // 严格按照 HTML <thead> 顺序渲染：Study, Substance, Region, Year, Method, Reference
     summaryData.forEach(row => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-gray-50 transition-colors border-b border-gray-100";
+        
         tr.innerHTML = `
             <td class="px-6 py-4 font-semibold text-blue-900">${row.name}</td>
             <td class="px-6 py-4 text-gray-700">${row.substance}</td>
@@ -1221,384 +1827,556 @@ function updateComparisonReferenceTable(data) {
     });
 }
 
-// Grid Inventory 函数
-async function loadGridWorkbookOnce() {
-    if (gridWorkbook) return true;
-    try {
-        const resp = await fetch(GRID_XLSX_FILE);
-        if (!resp.ok) throw new Error('Cannot fetch ' + GRID_XLSX_FILE);
-        const arrayBuffer = await resp.arrayBuffer();
-        gridWorkbook = XLSX.read(arrayBuffer, { type: 'array' });
-        gridSheetNames = gridWorkbook.SheetNames || [];
-        return true;
-    } catch (e) {
-        console.error("Grid XLSX load error:", e);
-        return false;
+    // 8. Auth & Downloads (Simulated)
+    function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+    function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+    function toggleAuthMode() {
+        authMode = authMode === 'login' ? 'register' : 'login';
+        document.getElementById('register-fields').classList.toggle('hidden');
+        document.getElementById('auth-title').innerText = authMode === 'login' ? 'Login' : 'Register';
+        document.getElementById('toggle-btn').innerText = authMode === 'login' ? 'Switch to Register' : 'Switch to Login';
+   }
+
+    function submitAuth() {
+        // GitHub Pages Simulation: Just set true
+        isLoggedIn = true;
+        const email = document.getElementById('auth-email').value || "user@demo.com";
+        document.getElementById('user-status').innerHTML = `<span class="text-sm font-semibold">Welcome, ${email}</span>`;
+        closeAuthModal();
+        alert("Login Successful (Demo Mode)");
     }
+
+   function handleDownload(filename) {
+    // 弹出提示框，要求联系指定邮箱
+    alert("Please contact us at 1289454819@qq.com to obtain the data.");
 }
 
-function normalizeKey(k) {
-    return String(k).replace(/[\s\u3000]+/g, '').trim();
-}
+	// ===============================
+	// 9.Gridded Inventory (NEW)
+	// ===============================
+	let gridWorkbook = null;
+	let gridSheetNames = [];
+	let gridYearsCache = {};     // sheetName -> [years]
+	let gridDataCache = {};      // sheetName -> parsed rows
+	const GRID_XLSX_FILE = '网格化清单.xlsx';
 
-function parseGridSheet(sheetName) {
-    if (gridDataCache[sheetName]) return gridDataCache[sheetName];
+	//const REGION_BBOX = {
+	//  "China": { lonMin: 73, lonMax: 135, latMin: 17, latMax: 54 }
+	//};
+    //const bbox = null; // REGION_BBOX[region] || null;
 
-    const ws = gridWorkbook.Sheets[sheetName];
-    const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-    if (!aoa || aoa.length < 2) {
-        gridYearsCache[sheetName] = [];
-        gridDataCache[sheetName] = [];
-        return [];
-    }
+	function hasRegionColumn(row){
+	  return row && (row.hasOwnProperty("region") || row.hasOwnProperty("Region") || row.hasOwnProperty("REGION"));
+	}
 
-    const rawHeader = aoa[0];
-    const header = rawHeader.map(h => normalizeKey(h));
-    const rows = [];
-    for (let i = 1; i < aoa.length; i++) {
-        const rowArr = aoa[i];
-        const obj = {};
-        for (let j = 0; j < header.length; j++) {
-            const key = header[j];
-            if (!key) continue;
-            obj[key] = rowArr[j];
-        }
-        rows.push(obj);
-    }
+	// Load Excel once
+	async function loadGridWorkbookOnce() {
+	  if (gridWorkbook) return true;
+	  try {
+		const resp = await fetch(GRID_XLSX_FILE);
+		if (!resp.ok) throw new Error('Cannot fetch ' + GRID_XLSX_FILE);
+		const arrayBuffer = await resp.arrayBuffer();
+		gridWorkbook = XLSX.read(arrayBuffer, { type: 'array' });
+		gridSheetNames = gridWorkbook.SheetNames || [];
+		return true;
+	  } catch (e) {
+		console.error("Grid XLSX load error:", e);
+		return false;
+	  }
+	}
 
-    rows.forEach(r => {
-        const lat = r.LAT ?? r.Lat ?? r.lat;
-        const lon = r.LON ?? r.Lon ?? r.lon;
-        r.LAT = lat;
-        r.LON = lon;
-    });
+	// Parse one sheet
+	function normalizeKey(k) {
+	  // 去掉首尾空格、Tab、全角空格等
+	  return String(k).replace(/[\s\u3000]+/g, '').trim();
+	}
 
-    const keys = rows.length > 0 ? Object.keys(rows[0]) : [];
-    const yearCols = keys
-        .filter(k => /^\d{4}$/.test(k))
-        .map(k => parseInt(k, 10))
-        .sort((a, b) => a - b);
+	function parseGridSheet(sheetName) {
+	  if (gridDataCache[sheetName]) return gridDataCache[sheetName];
 
-    gridYearsCache[sheetName] = yearCols;
-    gridDataCache[sheetName] = rows;
-    return rows;
-}
+	  const ws = gridWorkbook.Sheets[sheetName];
 
-function buildGridData(rows, year, bbox) {
-    const yrKey = String(year);
-    const out = [];
-    for (let i = 0; i < rows.length; i++) {
-        const r = rows[i];
-        let lat = Number(r.LAT);
-        let lon = Number(r.LON);
-        const val = Number(r[yrKey]);
-        if (!Number.isFinite(lat) || !Number.isFinite(lon) || !Number.isFinite(val)) continue;
-        if (bbox) {
-            if (lon < bbox.lonMin || lon > bbox.lonMax || lat < bbox.latMin || lat > bbox.latMax) continue;
-        }
-        out.push([lon, lat, val]);
-    }
-    return out;
-}
+	  // header:1 先拿到二维数组，自己处理表头（最稳）
+	  const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+	  if (!aoa || aoa.length < 2) {
+		gridYearsCache[sheetName] = [];
+		gridDataCache[sheetName] = [];
+		return [];
+	  }
 
-function buildGridRects(dataNum) {
-    const out = [];
-    for (let i = 0; i < dataNum.length; i++) {
-        const lon = dataNum[i][0];
-        const lat = dataNum[i][1];
-        const val = dataNum[i][2];
-        if (val === null || !Number.isFinite(val)) continue;
-        const lonMin = lon - 0.5;
-        const lonMax = lon + 0.5;
-        const latMin = lat - 0.5;
-        const latMax = lat + 0.5;
-        out.push([lonMin, latMin, lonMax, latMax, val]);
-    }
-    return out;
-}
+	  // 1) 取表头并 normalize
+	  const rawHeader = aoa[0];
+	  const header = rawHeader.map(h => normalizeKey(h));
 
-function hasRegionColumn(row) {
-    return row && (row.hasOwnProperty("region") || row.hasOwnProperty("Region") || row.hasOwnProperty("REGION"));
-}
+	  // 2) 组装 rows
+	  const rows = [];
+	  for (let i = 1; i < aoa.length; i++) {
+		const rowArr = aoa[i];
+		const obj = {};
+		for (let j = 0; j < header.length; j++) {
+		  const key = header[j];
+		  if (!key) continue;
+		  obj[key] = rowArr[j];
+		}
+		rows.push(obj);
+	  }
 
-function buildChinaBorderLines(geojson) {
-    const lines = [];
-    geojson.features.forEach(f => {
-        const coords = f.geometry.coordinates;
-        const pushRing = (ring) => {
-            if (!ring || ring.length < 2) return;
-            lines.push({ coords: ring });
-        };
-        if (f.geometry.type === 'Polygon') {
-            coords.forEach(ring => pushRing(ring));
-        } else if (f.geometry.type === 'MultiPolygon') {
-            coords.forEach(poly => poly.forEach(ring => pushRing(ring)));
-        }
-    });
-    return lines;
-}
+	  // 3) 兼容 LAT/LON（你的数据就是 LAT/LON）
+	  //    同时也兼容 Lat/Lon/lat/lon
+	  rows.forEach(r => {
+		const lat = r.LAT ?? r.Lat ?? r.lat;
+		const lon = r.LON ?? r.Lon ?? r.lon;
+		r.LAT = lat;
+		r.LON = lon;
+	  });
 
-async function loadChinaGeoJSON() {
-    if (chinaBorderLines) return;
-    try {
-        const resp = await fetch('china.json');
-        if (!resp.ok) throw new Error('Cannot fetch china.json');
-        const geojson = await resp.json();
-        chinaBorderLines = buildChinaBorderLines(geojson);
-        echarts.registerMap('china', geojson);
-        console.log('China map loaded');
-    } catch (e) {
-        console.error('Failed to load china.json:', e);
-    }
-}
+	  // 4) 检测年份列（normalize 后就能匹配了）
+	  const keys = rows.length > 0 ? Object.keys(rows[0]) : [];
+	  const yearCols = keys
+		.filter(k => /^\d{4}$/.test(k))
+		.map(k => parseInt(k, 10))
+		.sort((a, b) => a - b);
 
-async function initGridInventoryUI() {
-    const ok = await loadGridWorkbookOnce();
-    const dom = document.getElementById('grid-inventory-chart');
-    if (!ok) {
-        if (dom) dom.innerHTML = '<div class="text-center text-red-600 p-4">Failed to load 网格化清单.xlsx. Please ensure it is in the same folder.</div>';
-        return;
-    }
+	  gridYearsCache[sheetName] = yearCols;
+	  gridDataCache[sheetName] = rows;
+	  return rows;
+	}
 
-    const subSel = document.getElementById('grid-substance');
-    const yearSel = document.getElementById('grid-year');
-    if (!subSel || !yearSel) return;
+	
+	function buildGridRects(dataNum) {
+	  // dataNum: [ [lon,lat,val], ... ] (lon/lat 为中心点)
+	  // return: [ [lonMin,latMin,lonMax,latMax,val], ... ]
+	  const out = [];
+	  for (let i = 0; i < dataNum.length; i++) {
+		const lon = dataNum[i][0];
+		const lat = dataNum[i][1];
+		const val = dataNum[i][2];
+	 // ✅ val 为 null/NaN：跳过（或者保留但不进 visualMap）
+		if (val === null || !Number.isFinite(val)) continue;
+		// 严格 1°：中心点 +/- 0.5
+		const lonMin = lon - 0.5;
+		const lonMax = lon + 0.5;
+		const latMin = lat - 0.5;
+		const latMax = lat + 0.5;
 
-    subSel.innerHTML = gridSheetNames.map(s => `<option value="${s}">${s}</option>`).join('');
-    subSel.onchange = function() {
-        const sheet = subSel.value;
-        parseGridSheet(sheet);
-        const years = gridYearsCache[sheet] || [];
-        yearSel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
-        if (years.length > 0) yearSel.value = years[0];
-    };
+		out.push([lonMin, latMin, lonMax, latMax, val]);
+	  }
+	  return out;
+	}
 
-    if (gridSheetNames.length > 0) {
-        subSel.value = gridSheetNames[0];
-        subSel.onchange();
-        await loadChinaGeoJSON();
-        await updateGridInventoryChart();
-    }
-}
+	
+	
+	async function initGridInventoryUI() {
+	  const ok = await loadGridWorkbookOnce();
+	  const dom = document.getElementById('grid-inventory-chart');
+	  if (!ok) {
+		if (dom) dom.innerHTML = '<div class="text-center text-red-600 p-4">Failed to load 网格化清单.xlsx. Please ensure it is in the same folder.</div>';
+		return;
+	  }
 
-async function updateGridInventoryChart() {
-    const subSel = document.getElementById('grid-substance');
-    const yearSel = document.getElementById('grid-year');
-    const dom = document.getElementById('grid-inventory-chart');
-    if (!subSel || !yearSel || !dom) return;
+	  const subSel = document.getElementById('grid-substance');
+	  const yearSel = document.getElementById('grid-year');
+	  const regSel = document.getElementById('grid-region');
+	  if (!subSel || !yearSel || !regSel) return;
 
-    if (!gridWorkbook) {
-        dom.innerHTML = '<div class="text-center text-gray-500 p-4">Grid workbook not loaded yet.</div>';
-        return;
-    }
+	  subSel.innerHTML = gridSheetNames.map(s => `<option value="${s}">${s}</option>`).join('');
 
-    const sheet = subSel.value;
-    const year = parseInt(yearSel.value);
-    const rows = parseGridSheet(sheet);
+	  subSel.onchange = function() {
+		const sheet = subSel.value;
+		parseGridSheet(sheet);
+		const years = gridYearsCache[sheet] || [];
+		yearSel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+		if (years.length > 0) yearSel.value = years[0];
+	  };
 
-    const bbox = null;
-    const dataNum = buildGridData(rows, year, bbox);
+	  if (gridSheetNames.length > 0) {
+		subSel.value = gridSheetNames[0];
+		subSel.onchange();
+	  }
 
-    if (dataNum.length === 0) {
-        dom.innerHTML = '<div class="text-center text-gray-500 p-4">No grid data available for this selection.</div>';
-        return;
-    }
+	  // Display default chart for the first substance, region, and year before user selects
+	  const defaultSubstance = gridSheetNames[0];
+	  const defaultRegion = regSel.value || '';  // 默认区域
+	  const defaultYear = gridYearsCache[defaultSubstance]?.[0] || 2020;  // 默认年份
 
-    let chart = echarts.getInstanceByDom(dom);
-    if (chart) chart.dispose();
-    chart = echarts.init(dom);
+	  // Set default values and load the initial chart
+	  subSel.value = defaultSubstance;
+	  yearSel.value = defaultYear;
+	  regSel.value = defaultRegion;
+	  
+	  // Call to update the grid chart with default settings
+	  await updateGridInventoryChart();
+	}
 
-    const vals = dataNum.map(d => d[2]).filter(v => v !== null && Number.isFinite(v));
-    let vmin = Math.min(...vals);
-    let vmax = Math.max(...vals);
-    if (!Number.isFinite(vmin) || !Number.isFinite(vmax)) { vmin = 0; vmax = 1; }
-    if (vmin === vmax) { vmax = vmin + 1; }
+	// Build scatter data: [lon, lat, value]
+	function buildGridData(rows, year, bbox) {
+	  const yrKey = String(year);
+	  const out = [];
 
-    const rectData = buildGridRects(dataNum);
-    const colorRange = ['#f0f8ff', '#ff9999', '#ff0000', '#800000', '#4b0082'];
+	  for (let i = 0; i < rows.length; i++) {
+		const r = rows[i];
 
-    const option = {
-        title: { text: `Gridded Emissions: ${sheet} | ${year}`, left: 'center', top: 10 },
-        grid: { left: 40, right: 80, top: 70, bottom: 30 },
-        geo: [
-            {
-                map: 'china',
-                roam: false,
-                silent: true,
-                layoutCenter: ['50%', '50%'],
-                layoutSize: '85%',
-                itemStyle: { areaColor: '#f5f5f5', borderWidth: 0 }
-            },
-            {
-                map: 'china',
-                roam: false,
-                silent: true,
-                zlevel: 50,
-                layoutCenter: ['50%', '50%'],
-                layoutSize: '85%',
-                tooltip: { show: false },
-                emphasis: { disabled: true },
-                itemStyle: {
-                    areaColor: 'rgba(0,0,0,0)',
-                    borderColor: 'rgba(0,0,0,0.9)',
-                    borderWidth: 0.7
-                }
-            }
-        ],
-        tooltip: {
-            trigger: 'item',
-            confine: true,
-            formatter: function (p) {
-                const v = p.value;
-                if (Array.isArray(v) && v.length >= 5) {
-                    const val = v[4];
-                    if (val === null || val === undefined) return '';
-                    return `Lon: ${v[0]}–${v[2]}<br/>Lat: ${v[1]}–${v[3]}<br/>Value: ${val} t`;
-                }
-                return '';
-            }
+		let lat = Number(r.LAT);
+		let lon = Number(r.LON);
+		const val = Number(r[yrKey]);
+
+		if (!Number.isFinite(lat) || !Number.isFinite(lon) || !Number.isFinite(val)) continue;
+
+		// ✅ 自动识别并交换（你现在就是这种情况）
+		// 现状：lon ~ 17–54（像纬度），lat ~ 73–135（像经度）
+		//if (Math.abs(lon) <= 90 && Math.abs(lat) > 90) {
+		  //const tmp = lon;
+		  //lon = lat;
+		  //lat = tmp;
+		//}
+
+		if (bbox) {
+		 if (lon < bbox.lonMin || lon > bbox.lonMax || lat < bbox.latMin || lat > bbox.latMax) continue;
+		}
+
+		out.push([lon, lat, val]);  // 现在一定是正确顺序
+	  }
+	  return out;
+	}
+	
+	let chinaBorderLines = null;   // ✅ 必须全局声明
+
+	function buildChinaBorderLines(geojson) {
+	  const lines = [];
+
+	  geojson.features.forEach(f => {
+		const coords = f.geometry.coordinates;
+
+		const pushRing = (ring) => {
+		  if (!ring || ring.length < 2) return;
+		  lines.push({ coords: ring }); // ✅ 整个 ring 一条 polyline
+		};
+
+		if (f.geometry.type === 'Polygon') {
+		  coords.forEach(ring => pushRing(ring));
+		} else if (f.geometry.type === 'MultiPolygon') {
+		  coords.forEach(poly => poly.forEach(ring => pushRing(ring)));
+		}
+	  });
+
+	  return lines;
+	}
+
+	
+	
+	async function loadChinaGeoJSON() {
+	if (echarts.getMap('china')) return;
+	const resp = await fetch('china.json');
+	const geojson = await resp.json();
+	echarts.registerMap('china', geojson);
+	chinaBorderLines = buildChinaBorderLines(geojson);  // ⭐关键
+		// ===== DEBUG: check border coord ranges =====
+	(function () {
+	  if (!chinaBorderLines || chinaBorderLines.length === 0) return;
+	  let lonMin = 1e9, lonMax = -1e9, latMin = 1e9, latMax = -1e9;
+
+	  for (let i = 0; i < chinaBorderLines.length; i++) {
+		const ring = chinaBorderLines[i].coords;
+		for (let j = 0; j < ring.length; j++) {
+		  const x = ring[j][0];
+		  const y = ring[j][1];
+		  if (typeof x === 'number' && typeof y === 'number') {
+			lonMin = Math.min(lonMin, x); lonMax = Math.max(lonMax, x);
+			latMin = Math.min(latMin, y); latMax = Math.max(latMax, y);
+		  }
+		}
+	  }
+	  console.log('[BORDER RANGE] lon:', lonMin, lonMax, 'lat:', latMin, latMax);
+	})();
+	}
+
+    async function updateGridInventoryChart() {
+	  const subSel = document.getElementById('grid-substance');
+	  const regSel = document.getElementById('grid-region');
+	  const yearSel = document.getElementById('grid-year');
+	  const dom = document.getElementById('grid-inventory-chart');
+	  if (!subSel || !regSel || !yearSel || !dom) return;
+
+	  if (!gridWorkbook) {
+		dom.innerHTML = '<div class="text-center text-gray-500 p-4">Grid workbook not loaded yet.</div>';
+		return;
+	  }
+
+	  
+	  await loadChinaGeoJSON();
+	  console.log('border lines:', chinaBorderLines ? chinaBorderLines.length : null);
+
+	  
+	  const sheet = subSel.value;
+	  const region = regSel.value;
+	  const year = parseInt(yearSel.value);
+
+	  const rows = parseGridSheet(sheet);
+
+	  // region列过滤（如果存在）
+	  let filteredRows = rows;
+	  if (region && rows.length > 0 && hasRegionColumn(rows[0])) {
+	  const target = String(region).trim().toLowerCase();
+	  filteredRows = rows.filter(r => {
+		const v = (r.region ?? r.Region ?? r.REGION);
+		if (v === undefined || v === null) return false;
+		return String(v).trim().toLowerCase() === target;
+	  });
+	}
+
+
+	  const bbox = null;  // 暂时不做 bbox 过滤
+	  const dataNum = buildGridData(filteredRows, year, bbox);
+	  
+	  const ZERO_EPS = 1e-12;  // 你数据如果是整数 0，可以直接用 0
+		for (let i = 0; i < dataNum.length; i++) {
+		  if (Math.abs(dataNum[i][2]) <= ZERO_EPS) dataNum[i][2] = null;
+		}
+	  
+	  const rectData = buildGridRects(dataNum); 
+	// rectData: [ [lonMin, latMin, lonMax, latMax, val], ... ]
+
+	  console.log("dataNum length:", dataNum.length);
+      console.log("first 5:", dataNum.slice(0,5));
+
+      const lons = dataNum.map(d => d[0]);
+      const lats = dataNum.map(d => d[1]);
+      console.log("lon range:", Math.min(...lons), Math.max(...lons));
+      console.log("lat range:", Math.min(...lats), Math.max(...lats));
+
+
+	  if (dataNum.length === 0) {
+		dom.innerHTML = '<div class="text-center text-gray-500 p-4">No grid data available for this selection.</div>';
+		return;
+	  }
+
+	  let chart = echarts.getInstanceByDom(dom);
+	  if (chart) chart.dispose();
+	  
+
+
+	  chart = echarts.init(dom);
+
+	  // ⭐⭐⭐ 必须加这一句
+	  setTimeout(() => chart.resize(), 50);
+
+      const vals = dataNum.map(d => d[2]).filter(v => v !== null && Number.isFinite(v));
+	  let vmin = Math.min(...vals);
+	  let vmax = Math.max(...vals);
+	  if (!Number.isFinite(vmin) || !Number.isFinite(vmax)) { vmin = 0; vmax = 1; }
+	  if (vmin === vmax) { vmax = vmin + 1; }   // 关键：避免 min==max
+	
+    const FRAME = { left: 40, top: 70, right: 90, bottom: 30 }; 
+   // right=90 是为了留 10px 给 visualMap（你 visualMap right:10）
+
+    
+	// 可以更改为更丰富的颜色阶梯
+	const colorRange = ['#f0f8ff', '#ff9999', '#ff0000', '#800000', '#4b0082']; // 从浅色到深色
+	
+	chart.setOption({
+	  title: { text: `Gridded Emissions: ${sheet} | ${year}`, left: 'center', top: 10 },
+		grid: {
+		  left: 40,
+		  right: 80,   // ✅ 给右侧竖直 visualMap 留空间
+		  top: 70,     // ✅ 给标题留空间
+		  bottom: 30
+		},
+		
+		geo: [
+		  // 0) 底层：仅做投影/底色（不显示边界，不响应任何交互）
+		  {
+			map: 'china',
+			roam: false,
+			silent: true,
+			layoutCenter: ['50%', '50%'],
+			layoutSize: '85%',
+
+			//label: { show: false },
+			//tooltip: { show: true },
+			//emphasis: { disabled: true },
+
+			itemStyle: {
+			  areaColor: '#f5f5f5',
+			  borderWidth: 0
+			}
+		  },
+
+		  // 1) 顶层：只画行政边界（透明填充）
+		  {
+			map: 'china',
+			roam: false,
+			silent: true,
+			zlevel: 50,                        // ✅ 保证在网格之上
+
+			layoutCenter: ['50%', '50%'],
+			layoutSize: '85%',
+
+			//label: { show: false },
+			tooltip: { show: false },          // ✅ 再次明确禁掉
+			emphasis: { disabled: true },
+
+			itemStyle: {
+			  areaColor: 'rgba(0,0,0,0)',
+			  borderColor: 'rgba(0,0,0,0.9)',
+			  borderWidth: 0.7
+			}
+		  }
+		],
+
+		
+
+
+		tooltip: {
+		  trigger: 'item',
+		  //triggerOn: 'mousemove|click',   // ✅ 点击也能显示
+		  confine: true,
+		  formatter: function (p) {
+			// ✅ 只处理 custom 网格（你的 series 名叫 grid）
+			//if (p.seriesName !== 'grid') return '';
+
+			const v = p.value; // [lonMin, latMin, lonMax, latMax, val]
+			if (Array.isArray(v) && v.length >= 5) {
+			  const val = v[4];
+			  if (val === null || val === undefined) return '';
+			  return (
+				'Lon: ' + v[0] + '–' + v[2] + '<br/>' +
+				'Lat: ' + v[1] + '–' + v[3] + '<br/>' +
+				'Value: ' + val + ' t'
+			  );
+			}
+			return '';
+		  }
+		},
+
+        
+		//tooltip: { show: false },
+		
+		visualMap: {
+		  min: vmin,
+		  max: vmax,
+		  calculable: true,
+		  orient: 'vertical',
+		  right: 10,
+		  top: 80,
+		  bottom: 40,
+          inRange: {
+            color: colorRange  // 修改颜色范围，这里是增强对比的颜色区间
         },
-        visualMap: {
-            min: vmin,
-            max: vmax,
-            calculable: true,
-            orient: 'vertical',
-            right: 10,
-            top: 80,
-            bottom: 40,
-            inRange: { color: colorRange },
-            title: { text: 'Unit: t' }
-        },
-        graphic: [{
-            type: 'text',
-            right: 10,
-            top: 60,
-            style: { text: 'Unit: t', fontSize: 12, fill: '#333' },
-            z: 100
-        }],
-        series: [{
-            name: 'grid',
-            type: 'custom',
-            coordinateSystem: 'geo',
-            geoIndex: 0,
-            data: rectData,
-            zlevel: 1,
-            z: 1,
-            encode: { value: 4 },
-            renderItem: function (params, api) {
-                const lonMin = api.value(0);
-                const latMin = api.value(1);
-                const lonMax = api.value(2);
-                const latMax = api.value(3);
-                const p1 = api.coord([lonMin, latMin]);
-                const p2 = api.coord([lonMax, latMax]);
-                const x = Math.min(p1[0], p2[0]);
-                const y = Math.min(p1[1], p2[1]);
-                const w = Math.abs(p2[0] - p1[0]);
-                const h = Math.abs(p2[1] - p1[1]);
-                return {
-                    type: 'rect',
-                    shape: { x: x, y: y, width: w, height: h },
-                    style: api.style({ stroke: 'rgba(0,0,0,0.03)', lineWidth: 0.2 })
-                };
-            }
-        }]
-    };
+		  
+		  // ✅ 加单位
+		  title: {
+			text: 'Unit：t',          // 只显示单位
+			// 也可以写成 'Unit: t'
+		  }
+		},
+		
+		// ✅ 画单位文字（最稳定）
+		graphic: [{
+		  type: 'text',
+		  right: 10,   // 和 visualMap 的 right 一致
+		  top: 60,     // 比 visualMap.top(80)略靠上一点，视觉上像“图例标题”
+		  style: {
+			text: 'Unit：t',
+			fontSize: 12,
+			fill: '#333'
+		  },
+		  z: 100
+		}],
 
-    chart.setOption(option);
-    chart.off('georoam');
-    chart.on('georoam', function () {
-        const opt = chart.getOption();
-        const g0 = opt.geo[0];
-        chart.setOption({
-            geo: [
-                {},
-                { zoom: g0.zoom, center: g0.center, silent: true, emphasis: { disabled: true } }
-            ]
-        });
-    });
-}
+		series: [{
+		  name: 'grid',
+		  type: 'custom',
+		  coordinateSystem: 'geo',
+		  geoIndex: 0,            // ✅ 明确绑定底层 geo
+		  data: rectData,         // [lonMin, latMin, lonMax, latMax, val]
+		  //tooltip: {
+			//show: true,
+			//trigger: 'item',
+			//confine: true,
+			//formatter: function (p) {
+			  //const v = p.value;
+			  //if (Array.isArray(v) && v.length >= 5) {
+				//return `Lon: ${v[0]}–${v[2]}<br/>Lat: ${v[1]}–${v[3]}<br/>Value: ${v[4]} t`;
+			  //}
+			  //return '';
+			//}
+		  //},
+		  zlevel: 1,
+		  z: 1,
+		  encode: { value: 4 },
+		  renderItem: function (params, api) {
+			const lonMin = api.value(0);
+			const latMin = api.value(1);
+			const lonMax = api.value(2);
+			const latMax = api.value(3);
 
-// 页面初始化
-window.addEventListener("load", async () => {
-    console.log("页面加载开始...");
-    console.log("云开发初始化结果:", cloudAuth.auth ? "成功" : "失败");
-    
-    initSelects();
-    initInversionSelect();
-    initComparisonSelect();
-    
-    const success = await loadData();
-    console.log("数据加载结果:", success);
-    
-    if (success) {
-        console.log("数据加载成功，开始初始化图表...");
-        
-        const subSel = document.getElementById('substance-select');
-        const regSel = document.getElementById('region-select');
-        
-        if (subSel && subSel.options.length > 0) {
-            subSel.selectedIndex = 0; 
-            console.log("默认物质:", subSel.value);
-        }
-        if (regSel && regSel.options.length > 0) {
-            regSel.selectedIndex = 0; 
-            console.log("默认区域:", regSel.value);
-        }
-        
-        handleMainFilterChange(); 
-        setActiveButton('btn-line'); 
-        
-        setTimeout(() => {
-            console.log("渲染Inventory图表...");
-            updateInventoryChart("line");
-        }, 300);
+			const p1 = api.coord([lonMin, latMin]);
+			const p2 = api.coord([lonMax, latMax]);
 
-        setTimeout(() => {
-            console.log("渲染Inversion图表...");
-            const invSub = document.getElementById('inv-substance');
-            const invReg = document.getElementById('inv-country');
-            
-            if (invSub && invSub.options.length > 0) {
-                invSub.selectedIndex = 0;
-                handleInvSubstanceChange();
-                
-                if (invReg && invReg.options.length > 0) {
-                    invReg.selectedIndex = 0;
-                }
-                handleInvFilterChange();
-                renderInversionChart();
-            }
-        }, 600);
+			const x = Math.min(p1[0], p2[0]);
+			const y = Math.min(p1[1], p2[1]);
+			const w = Math.abs(p2[0] - p1[0]);
+			const h = Math.abs(p2[1] - p1[1]);
 
-        setTimeout(() => {
-            console.log("渲染Comparison图表...");
-            const compSub = document.getElementById('comp-substance');
-            
-            if (compSub && compSub.options.length > 0) {
-                compSub.selectedIndex = 0;
-                handleCompSubstanceChange();
-                
-                setTimeout(() => {
-                    updateComparisonYearRange();
-                    renderComparisonChart();
-                }, 300);
-            }
-        }, 900);
+			return {
+			  type: 'rect',
+			  shape: { x: x, y: y, width: w, height: h },
+			  style: api.style({
+				stroke: 'rgba(0,0,0,0.03)',
+				lineWidth: 0.2
+			  })
+			};
+		  }
+		},
+		//{
+		  //name: 'admin-border',
+		  //type: 'lines',
+		  //coordinateSystem: 'geo',
+		  //polyline: true,        // ✅ 关键：一条线走完整个 ring
+		  //zlevel: 30,
+		  //silent: false,
+		  //tooltip: { show: false },
+		  //progressive: 0,
+		  //data: chinaBorderLines || [],
+		  //lineStyle: {
+			//color: 'rgba(0,0,0,0.9)',
+			//width: 0.7
+		  //}
+		//}
+		]
 
-        setTimeout(() => {
-            initGridInventoryUI();
-        }, 1200);
-    }
-    
-    showPage("home");
-    console.log("初始化完成");
-});
+	  
+	});
+	chart.off('georoam');
+	chart.on('georoam', function () {
+	  const opt = chart.getOption();
+	  const g0 = opt.geo[0];
+	  chart.setOption({
+		geo: [
+		  {},
+		  {
+			zoom: g0.zoom,
+			center: g0.center,
+			silent: true,
+            emphasis: { disabled: true }
 
-window.onresize = function() {
-    ['inventory-chart', 'inversion-chart', 'comparison-chart', 'grid-inventory-chart'].forEach(id => {
-        const chart = echarts.getInstanceByDom(document.getElementById(id));
-        if(chart) chart.resize();
-    });
-};
-</script>
+		  }
+		]
+	  });
+	}
+	);
+
+
+
+	}
+
+	// 页面加载后：初始化 grid 下拉框（不画图，等用户点按钮或切换触发）
+	window.addEventListener("load", () => {
+	  setTimeout(() => {
+		initGridInventoryUI();
+	  }, 300);
+	});
+
+    </script>
+</body>
+</html>
